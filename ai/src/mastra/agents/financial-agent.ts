@@ -1,8 +1,40 @@
 import { Agent } from '@mastra/core/agent'
 import { Memory } from '@mastra/memory'
-import { LibSQLStore } from '@mastra/libsql'
+import { LibSQLStore, LibSQLVector } from '@mastra/libsql'
 import { MCPClient } from '@mastra/mcp'
 import { getTransactionsTool } from '../tools/get-transactions-tool'
+
+const memoryDbUrl = 'file:./memory.db'
+
+const memory = new Memory({
+  storage: new LibSQLStore({
+    id: 'learning-memory-storage',
+    url: memoryDbUrl,
+  }),
+  vector: new LibSQLVector({
+    id: 'learning-memory-vector',
+    url: memoryDbUrl,
+  }),
+  embedder: 'openai/text-embedding-3-small',
+  options: {
+    lastMessages: 20,
+    semanticRecall: {
+      topK: 3,
+      messageRange: { before: 2, after: 1 },
+    },
+    workingMemory: {
+      enabled: true,
+      template: `
+<user>
+  <first_name></first_name>
+  <username></username>
+  <preferences></preferences>
+  <interests></interests>
+  <conversation_style></conversation_style>
+</user>`,
+    },
+  },
+})
 
 const mcp = new MCPClient({
   servers: {
@@ -58,13 +90,11 @@ ZAPIER (Gmail y otras integraciones)
 
 HACKER NEWS
 - Use Hacker News tools to search for stories, get top stories or specific stories, and retrieve comments.
-- Use them when the user asks about tech news, Hacker News, or industry trends. Keep responses concise and friendly.`,
+- Use them when the user asks about tech news, Hacker News, or industry trends. Keep responses concise and friendly.
+
+MEMORY
+- You have conversation memory and can remember details about users. When you learn something about a user, update their working memory using the appropriate tool (e.g. interests, preferences, conversation style). Use stored information to provide more personalized responses. Maintain a helpful and professional tone.`,
   model: 'openai/gpt-4.1-mini',
   tools: { getTransactionsTool, ...mcpTools },
-  memory: new Memory({
-    storage: new LibSQLStore({
-      id: 'learning-memory-storage',
-      url: 'file:./memory.db', // base de datos en disco (relativo al directorio de ejecución)
-    }),
-  }),
+  memory,
 })
