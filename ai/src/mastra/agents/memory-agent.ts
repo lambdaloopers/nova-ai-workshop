@@ -7,6 +7,9 @@ const memory = new Memory({
     id: 'learning-memory-storage',
     url: 'file:./memory-agent.db',
   }),
+  options: {
+    lastMessages: 20, // Incluir las últimas 20 mensajes en el contexto (por defecto 10)
+  },
 })
 
 export const memoryAgent = new Agent({
