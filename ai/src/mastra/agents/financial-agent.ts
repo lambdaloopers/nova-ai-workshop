@@ -6,7 +6,9 @@ import { getTransactionsTool } from '../tools/get-transactions-tool'
 
 const mcp = new MCPClient({
   servers: {
-    // Añadiremos servidores en los siguientes pasos
+    zapier: {
+      url: new URL(process.env.ZAPIER_MCP_URL || ''),
+    },
   },
 })
 
@@ -44,7 +46,11 @@ SUCCESS CRITERIA
 
 TOOLS
 - Use the getTransactions tool to fetch financial transaction data.
-- Analyze the transaction data to answer user questions about their spending.`,
+- Analyze the transaction data to answer user questions about their spending.
+
+ZAPIER (Gmail y otras integraciones)
+- You have access to Zapier tools (e.g. Gmail) when configured: reading/categorizing emails, identifying action items, summarizing content, sending emails.
+- Use these tools when the user asks about email or when it helps with financial context (e.g. receipts, statements). Keep responses concise and friendly.`,
   model: 'openai/gpt-4.1-mini',
   tools: { getTransactionsTool, ...mcpTools },
   memory: new Memory({
