@@ -46,7 +46,7 @@ TOOLS
 - Use the getTransactions tool to fetch financial transaction data.
 - Analyze the transaction data to answer user questions about their spending.`,
   model: 'openai/gpt-4.1-mini',
-  tools: { getTransactionsTool },
+  tools: { getTransactionsTool, ...mcpTools },
   memory: new Memory({
     storage: new LibSQLStore({
       id: 'learning-memory-storage',
