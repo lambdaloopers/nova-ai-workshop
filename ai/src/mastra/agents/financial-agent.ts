@@ -9,6 +9,10 @@ const mcp = new MCPClient({
     zapier: {
       url: new URL(process.env.ZAPIER_MCP_URL || ''),
     },
+    hackernews: {
+      command: 'npx',
+      args: ['-y', '@devabdultech/hn-mcp-server'],
+    },
   },
 })
 
@@ -50,7 +54,11 @@ TOOLS
 
 ZAPIER (Gmail y otras integraciones)
 - You have access to Zapier tools (e.g. Gmail) when configured: reading/categorizing emails, identifying action items, summarizing content, sending emails.
-- Use these tools when the user asks about email or when it helps with financial context (e.g. receipts, statements). Keep responses concise and friendly.`,
+- Use these tools when the user asks about email or when it helps with financial context (e.g. receipts, statements). Keep responses concise and friendly.
+
+HACKER NEWS
+- Use Hacker News tools to search for stories, get top stories or specific stories, and retrieve comments.
+- Use them when the user asks about tech news, Hacker News, or industry trends. Keep responses concise and friendly.`,
   model: 'openai/gpt-4.1-mini',
   tools: { getTransactionsTool, ...mcpTools },
   memory: new Memory({
