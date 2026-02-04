@@ -38,9 +38,6 @@ const memory = new Memory({
 
 const mcp = new MCPClient({
   servers: {
-    zapier: {
-      url: new URL(process.env.ZAPIER_MCP_URL || ''),
-    },
     hackernews: {
       command: 'npx',
       args: ['-y', '@devabdultech/hn-mcp-server'],
@@ -83,10 +80,6 @@ SUCCESS CRITERIA
 TOOLS
 - Use the getTransactions tool to fetch financial transaction data.
 - Analyze the transaction data to answer user questions about their spending.
-
-ZAPIER (Gmail y otras integraciones)
-- You have access to Zapier tools (e.g. Gmail) when configured: reading/categorizing emails, identifying action items, summarizing content, sending emails.
-- Use these tools when the user asks about email or when it helps with financial context (e.g. receipts, statements). Keep responses concise and friendly.
 
 HACKER NEWS
 - Use Hacker News tools to search for stories, get top stories or specific stories, and retrieve comments.
