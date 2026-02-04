@@ -1,7 +1,16 @@
 import { Agent } from '@mastra/core/agent'
 import { Memory } from '@mastra/memory'
 import { LibSQLStore } from '@mastra/libsql'
+import { MCPClient } from '@mastra/mcp'
 import { getTransactionsTool } from '../tools/get-transactions-tool'
+
+const mcp = new MCPClient({
+  servers: {
+    // Añadiremos servidores en los siguientes pasos
+  },
+})
+
+const mcpTools = await mcp.listTools()
 
 export const financialAgent = new Agent({
   id: 'financial-agent',
