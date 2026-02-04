@@ -1,4 +1,6 @@
 import { Agent } from '@mastra/core/agent'
+import { Memory } from '@mastra/memory'
+import { LibSQLStore } from '@mastra/libsql'
 import { getTransactionsTool } from '../tools/get-transactions-tool'
 
 export const financialAgent = new Agent({
@@ -36,4 +38,10 @@ TOOLS
 - Analyze the transaction data to answer user questions about their spending.`,
   model: 'openai/gpt-4.1-mini',
   tools: { getTransactionsTool },
+  memory: new Memory({
+    storage: new LibSQLStore({
+      id: 'learning-memory-storage',
+      url: 'file:./memory.db', // base de datos en disco (relativo al directorio de ejecución)
+    }),
+  }),
 })
