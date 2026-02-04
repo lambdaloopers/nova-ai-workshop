@@ -1,5 +1,5 @@
 import { Agent } from '@mastra/core/agent'
-// We'll import our tool in a later step
+import { getTransactionsTool } from '../tools/get-transactions-tool'
 
 export const financialAgent = new Agent({
   id: 'financial-agent',
@@ -29,7 +29,11 @@ CONSTRAINTS & BOUNDARIES
 SUCCESS CRITERIA
 - Deliver accurate and helpful analysis of transaction data.
 - Achieve high user satisfaction through clear and helpful responses.
-- Maintain user trust by ensuring data privacy and security.`,
+- Maintain user trust by ensuring data privacy and security.
+
+TOOLS
+- Use the getTransactions tool to fetch financial transaction data.
+- Analyze the transaction data to answer user questions about their spending.`,
   model: 'openai/gpt-4.1-mini',
-  tools: {}, // We'll add tools in a later step
+  tools: { getTransactionsTool },
 })
