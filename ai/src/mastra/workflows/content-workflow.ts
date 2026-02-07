@@ -121,9 +121,156 @@ const generateSummaryStep = createStep({
   },
 })
 
+const aiAnalysisStep = createStep({
+  id: 'ai-analysis',
+  description: 'AI-powered content analysis',
+  inputSchema: z.object({
+    content: z.string(),
+    type: z.string(),
+    wordCount: z.number(),
+    metadata: z.object({
+      readingTime: z.number(),
+      difficulty: z.enum(['easy', 'medium', 'hard']),
+      processedAt: z.string(),
+    }),
+    summary: z.string(),
+  }),
+  outputSchema: z.object({
+    content: z.string(),
+    type: z.string(),
+    wordCount: z.number(),
+    metadata: z.object({
+      readingTime: z.number(),
+      difficulty: z.enum(['easy', 'medium', 'hard']),
+      processedAt: z.string(),
+    }),
+    summary: z.string(),
+    aiAnalysis: z.object({
+      score: z.number(),
+      feedback: z.string(),
+    }),
+  }),
+  execute: async ({ inputData, mastra }) => {
+    const { content, type, wordCount, metadata, summary } = inputData
+
+    const prompt = `
+Analyze this ${type} content:
+
+Content: "${content}"
+Word count: ${wordCount}
+Reading time: ${metadata.readingTime} minutes
+Difficulty: ${metadata.difficulty}
+
+Please provide:
+1. A quality score from 1-10
+2. Brief feedback on strengths and areas for improvement
+
+Format as JSON: {"score": number, "feedback": "your feedback here"}
+    `
+
+    const contentAgent = mastra.getAgent('contentAgent')
+    const { text } = await contentAgent.generate([{ role: 'user', content: prompt }])
+
+    let aiAnalysis: { score: number; feedback: string }
+    try {
+      aiAnalysis = JSON.parse(text) as { score: number; feedback: string }
+    } catch {
+      aiAnalysis = {
+        score: 7,
+        feedback: 'AI analysis completed. ' + text,
+      }
+    }
+
+    return {
+      content,
+      type,
+      wordCount,
+      metadata,
+      summary,
+      aiAnalysis,
+    }
+  },
+})
+
+// Parallel analysis steps (same input: content + type)
+const seoAnalysisStep = createStep({
+  id: 'seo-analysis',
+  description: 'SEO optimization analysis',
+  inputSchema: z.object({
+    content: z.string(),
+    type: z.enum(['article', 'blog', 'social']).default('article'),
+  }),
+  outputSchema: z.object({
+    seoScore: z.number(),
+    keywords: z.array(z.string()),
+  }),
+  execute: async ({ inputData }) => {
+    await new Promise((resolve) => setTimeout(resolve, 800))
+    const words = inputData.content.toLowerCase().split(/\s+/)
+    const keywords = words.filter((w) => w.length > 4).slice(0, 3)
+    return {
+      seoScore: Math.floor(Math.random() * 40) + 60,
+      keywords,
+    }
+  },
+})
+
+const readabilityStep = createStep({
+  id: 'readability-analysis',
+  description: 'Content readability analysis',
+  inputSchema: z.object({
+    content: z.string(),
+    type: z.enum(['article', 'blog', 'social']).default('article'),
+  }),
+  outputSchema: z.object({
+    readabilityScore: z.number(),
+    gradeLevel: z.string(),
+  }),
+  execute: async ({ inputData }) => {
+    await new Promise((resolve) => setTimeout(resolve, 600))
+    const sentences = inputData.content.split(/[.!?]+/).length
+    const words = inputData.content.split(/\s+/).length
+    const avgWordsPerSentence = words / sentences
+    const score = Math.max(0, 100 - avgWordsPerSentence * 3)
+    const gradeLevel = score > 80 ? 'Easy' : score > 60 ? 'Medium' : 'Hard'
+    return {
+      readabilityScore: Math.floor(score),
+      gradeLevel,
+    }
+  },
+})
+
+const sentimentStep = createStep({
+  id: 'sentiment-analysis',
+  description: 'Content sentiment analysis',
+  inputSchema: z.object({
+    content: z.string(),
+    type: z.enum(['article', 'blog', 'social']).default('article'),
+  }),
+  outputSchema: z.object({
+    sentiment: z.enum(['positive', 'neutral', 'negative']),
+    confidence: z.number(),
+  }),
+  execute: async ({ inputData }) => {
+    await new Promise((resolve) => setTimeout(resolve, 700))
+    const content = inputData.content.toLowerCase()
+    const positiveWords = ['good', 'great', 'excellent', 'amazing']
+    const negativeWords = ['bad', 'terrible', 'awful', 'horrible']
+    const positive = positiveWords.filter((w) => content.includes(w)).length
+    const negative = negativeWords.filter((w) => content.includes(w)).length
+    let sentiment: 'positive' | 'neutral' | 'negative' = 'neutral'
+    if (positive > negative) sentiment = 'positive'
+    if (negative > positive) sentiment = 'negative'
+    return {
+      sentiment,
+      confidence: Math.random() * 0.3 + 0.7,
+    }
+  },
+})
+
 export const contentWorkflow = createWorkflow({
   id: 'content-processing-workflow',
-  description: 'Validates and enhances content',
+  description: 'Validates, enhances, and summarizes content',
   inputSchema: z.object({
     content: z.string(),
     type: z.enum(['article', 'blog', 'social']).default('article'),
@@ -138,11 +285,53 @@ export const contentWorkflow = createWorkflow({
       processedAt: z.string(),
     }),
     summary: z.string(),
+    aiAnalysis: z.object({
+      score: z.number(),
+      feedback: z.string(),
+    }),
   }),
 })
   .then(validateContentStep)
   .then(enhanceContentStep)
   .then(generateSummaryStep)
+  .then(aiAnalysisStep)
   .commit()
 
-export { validateContentStep, enhanceContentStep, generateSummaryStep }
+export const aiContentWorkflow = createWorkflow({
+  id: 'ai-content-workflow',
+  description: 'AI-enhanced content processing with analysis',
+  inputSchema: z.object({
+    content: z.string(),
+    type: z.enum(['article', 'blog', 'social']).default('article'),
+  }),
+  outputSchema: z.object({
+    content: z.string(),
+    type: z.string(),
+    wordCount: z.number(),
+    metadata: z.object({
+      readingTime: z.number(),
+      difficulty: z.enum(['easy', 'medium', 'hard']),
+      processedAt: z.string(),
+    }),
+    summary: z.string(),
+    aiAnalysis: z.object({
+      score: z.number(),
+      feedback: z.string(),
+    }),
+  }),
+})
+  .then(validateContentStep)
+  .then(enhanceContentStep)
+  .then(generateSummaryStep)
+  .then(aiAnalysisStep)
+  .commit()
+
+export {
+  validateContentStep,
+  enhanceContentStep,
+  generateSummaryStep,
+  aiAnalysisStep,
+  seoAnalysisStep,
+  readabilityStep,
+  sentimentStep,
+}
