@@ -1,35 +1,45 @@
+"use client";
+import { Navbar } from "@/components/navbar";
+import { ProductCard } from "@/components/product-card";
+import { Button } from "@/components/ui/button";
+import brandsData from "@/data/brands.json";
+import categoriesData from "@/data/categories.json";
+import productsData from "@/data/products.json";
+import { useChatDrawer } from "@/lib/chat-drawer-context";
+import type { Brand, Category, Product } from "@/lib/types";
 import {
   ArrowRightIcon,
+  RotateCcwIcon,
+  ShieldCheckIcon,
   SparklesIcon,
   TruckIcon,
-  ShieldCheckIcon,
-  RotateCcwIcon,
   ZapIcon,
 } from "lucide-react";
 import Link from "next/link";
-import { Navbar } from "@/components/navbar";
-import { ProductCard } from "@/components/product-card";
-import categoriesData from "@/data/categories.json";
-import productsData from "@/data/products.json";
-import brandsData from "@/data/brands.json";
-import type { Product, Category, Brand } from "@/lib/types";
 
 const categories = categoriesData as unknown as Category[];
 const products = productsData as unknown as Product[];
 const brands = brandsData as unknown as Brand[];
 
-const featured = products.filter((p) =>
-  p.badges.includes("Best Seller") || p.badges.includes("Trending")
-).slice(0, 8);
+const featured = products
+  .filter(
+    (p) => p.badges.includes("Best Seller") || p.badges.includes("Trending"),
+  )
+  .slice(0, 8);
 
 const perks = [
-  { icon: TruckIcon, title: "Free Shipping", desc: "On orders over 49\u00a0\u20ac" },
+  {
+    icon: TruckIcon,
+    title: "Free Shipping",
+    desc: "On orders over 49\u00a0\u20ac",
+  },
   { icon: ShieldCheckIcon, title: "2-Year Warranty", desc: "On all products" },
   { icon: RotateCcwIcon, title: "30-Day Returns", desc: "No questions asked" },
   { icon: SparklesIcon, title: "AI Assistant", desc: "24/7 smart support" },
 ];
 
 export default function Home() {
+  const { toggle } = useChatDrawer();
   return (
     <div className="min-h-screen bg-background">
       {/* Skip link */}
@@ -48,34 +58,36 @@ export default function Home() {
           <div className="mx-auto max-w-7xl px-6 py-16 md:py-24">
             <div className="mx-auto max-w-2xl text-center">
               <div className="animate-reveal mb-5 inline-flex items-center gap-2 rounded-full border bg-card px-4 py-1.5 text-xs font-medium text-muted-foreground shadow-sm">
-                <SparklesIcon className="size-3.5 text-primary" aria-hidden="true" />
+                <SparklesIcon
+                  className="size-3.5 text-primary"
+                  aria-hidden="true"
+                />
                 AI-Powered Electronics Marketplace
               </div>
 
               <h1 className="animate-reveal delay-1 font-display text-4xl font-extrabold tracking-tight sm:text-5xl md:text-6xl">
-                Find the best tech,{" "}
-                <span className="text-primary">faster</span>
+                Find the best tech, <span className="text-primary">faster</span>
               </h1>
 
               <p className="animate-reveal delay-2 mt-5 text-lg text-muted-foreground">
-                Browse thousands of products or let our AI assistant help you find exactly what you need.
+                Browse thousands of products or let our AI assistant help you
+                find exactly what you need.
               </p>
 
               <div className="animate-reveal delay-3 mt-8 flex flex-col items-center gap-3 sm:flex-row sm:justify-center">
-                <Link
-                  href="/catalog"
-                  className="inline-flex h-11 items-center gap-2 rounded-lg bg-primary px-6 text-sm font-semibold text-primary-foreground shadow-sm transition-opacity duration-200 hover:opacity-90 focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
-                >
-                  Browse Catalog
-                  <ArrowRightIcon className="size-4" aria-hidden="true" />
-                </Link>
-                <Link
-                  href="/chat"
-                  className="inline-flex h-11 items-center gap-2 rounded-lg border bg-card px-6 text-sm font-semibold shadow-sm transition-colors duration-200 hover:bg-muted focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
-                >
-                  <SparklesIcon className="size-4 text-primary" aria-hidden="true" />
-                  Ask AI
-                </Link>
+                <Button asChild>
+                  <Link href="/catalog">
+                    Browse Catalog
+                    <ArrowRightIcon className="size-4" aria-hidden="true" />
+                  </Link>
+                </Button>
+                <Button onClick={toggle} variant="outline">
+                  <SparklesIcon
+                    className="size-4 text-primary"
+                    aria-hidden="true"
+                  />
+                  Chat with AI
+                </Button>
               </div>
             </div>
           </div>
@@ -85,11 +97,19 @@ export default function Home() {
         <section className="border-b">
           <div className="mx-auto grid max-w-7xl grid-cols-2 gap-px bg-border sm:grid-cols-4">
             {perks.map((p) => (
-              <div key={p.title} className="flex items-center gap-3 bg-background px-6 py-4">
-                <p.icon className="size-5 shrink-0 text-primary" aria-hidden="true" />
+              <div
+                key={p.title}
+                className="flex items-center gap-3 bg-background px-6 py-4"
+              >
+                <p.icon
+                  className="size-5 shrink-0 text-primary"
+                  aria-hidden="true"
+                />
                 <div className="min-w-0">
                   <p className="text-sm font-semibold truncate">{p.title}</p>
-                  <p className="text-xs text-muted-foreground truncate">{p.desc}</p>
+                  <p className="text-xs text-muted-foreground truncate">
+                    {p.desc}
+                  </p>
                 </div>
               </div>
             ))}
@@ -101,10 +121,17 @@ export default function Home() {
           <div className="mx-auto max-w-7xl px-6">
             <div className="mb-8 flex items-end justify-between">
               <div>
-                <p className="text-xs font-semibold uppercase tracking-widest text-primary">Categories</p>
-                <h2 className="mt-1 font-display text-2xl font-bold tracking-tight">Shop by Category</h2>
+                <p className="text-xs font-semibold uppercase tracking-widest text-primary">
+                  Categories
+                </p>
+                <h2 className="mt-1 font-display text-2xl font-bold tracking-tight">
+                  Shop by Category
+                </h2>
               </div>
-              <Link href="/catalog" className="text-sm font-medium text-primary transition-colors duration-200 hover:text-primary/80">
+              <Link
+                href="/catalog"
+                className="text-sm font-medium text-primary transition-colors duration-200 hover:text-primary/80"
+              >
                 View all &rarr;
               </Link>
             </div>
@@ -116,10 +143,14 @@ export default function Home() {
                   href={`/catalog?category=${cat.slug}`}
                   className={`animate-reveal delay-${i + 1} group flex flex-col items-center gap-3 rounded-xl border bg-card p-5 text-center transition-all duration-200 hover:border-primary/30 hover:shadow-md`}
                 >
-                  <span className="text-3xl" role="img" aria-label={cat.name}>{cat.emoji}</span>
+                  <span className="text-3xl" role="img" aria-label={cat.name}>
+                    {cat.emoji}
+                  </span>
                   <div className="min-w-0">
                     <p className="text-sm font-semibold truncate">{cat.name}</p>
-                    <p className="text-xs text-muted-foreground tabular-nums">{cat.productCount.toLocaleString()} products</p>
+                    <p className="text-xs text-muted-foreground tabular-nums">
+                      {cat.productCount.toLocaleString()} products
+                    </p>
                   </div>
                 </Link>
               ))}
@@ -132,10 +163,17 @@ export default function Home() {
           <div className="mx-auto max-w-7xl px-6">
             <div className="mb-8 flex items-end justify-between">
               <div>
-                <p className="text-xs font-semibold uppercase tracking-widest text-primary">Trending</p>
-                <h2 className="mt-1 font-display text-2xl font-bold tracking-tight">Featured Products</h2>
+                <p className="text-xs font-semibold uppercase tracking-widest text-primary">
+                  Trending
+                </p>
+                <h2 className="mt-1 font-display text-2xl font-bold tracking-tight">
+                  Featured Products
+                </h2>
               </div>
-              <Link href="/catalog" className="text-sm font-medium text-primary transition-colors duration-200 hover:text-primary/80">
+              <Link
+                href="/catalog"
+                className="text-sm font-medium text-primary transition-colors duration-200 hover:text-primary/80"
+              >
                 View all &rarr;
               </Link>
             </div>
@@ -151,10 +189,15 @@ export default function Home() {
         {/* ── Brands ── */}
         <section className="border-t py-12">
           <div className="mx-auto max-w-7xl px-6">
-            <p className="mb-6 text-center text-xs font-semibold uppercase tracking-widest text-muted-foreground">Trusted Brands</p>
+            <p className="mb-6 text-center text-xs font-semibold uppercase tracking-widest text-muted-foreground">
+              Trusted Brands
+            </p>
             <div className="flex flex-wrap items-center justify-center gap-x-8 gap-y-3">
               {brands.slice(0, 10).map((b) => (
-                <span key={b.id} className="text-sm font-semibold text-muted-foreground/60 transition-colors duration-200 hover:text-foreground">
+                <span
+                  key={b.id}
+                  className="text-sm font-semibold text-muted-foreground/60 transition-colors duration-200 hover:text-foreground"
+                >
                   {b.name}
                 </span>
               ))}
@@ -171,15 +214,19 @@ export default function Home() {
                 Not sure what to buy?
               </h2>
               <p className="relative mx-auto mt-4 max-w-md text-primary-foreground/80">
-                Our AI assistant knows the entire catalog. Ask for recommendations, comparisons, or help building your setup.
+                Our AI assistant knows the entire catalog. Ask for
+                recommendations, comparisons, or help building your setup.
               </p>
-              <Link
-                href="/chat"
+              <Button
+                onClick={toggle}
                 className="relative mt-8 inline-flex h-11 items-center gap-2 rounded-lg bg-card px-6 text-sm font-semibold text-foreground shadow transition-opacity duration-200 hover:opacity-90 focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-primary"
               >
-                <SparklesIcon className="size-4 text-primary" aria-hidden="true" />
+                <SparklesIcon
+                  className="size-4 text-primary"
+                  aria-hidden="true"
+                />
                 Chat with AI
-              </Link>
+              </Button>
             </div>
           </div>
         </section>
@@ -191,12 +238,16 @@ export default function Home() {
           <div className="flex flex-col items-center justify-between gap-4 sm:flex-row">
             <div className="flex items-center gap-2">
               <div className="flex h-6 w-6 items-center justify-center rounded-md bg-primary">
-                <ZapIcon className="size-3 text-primary-foreground" aria-hidden="true" />
+                <ZapIcon
+                  className="size-3 text-primary-foreground"
+                  aria-hidden="true"
+                />
               </div>
               <span className="font-display text-sm font-bold">Nova</span>
             </div>
             <p className="text-xs text-muted-foreground">
-              &copy; {new Date().getFullYear()} Nova Electronics. Built with Mastra, AI&nbsp;SDK&nbsp;&amp;&nbsp;AI&nbsp;Elements.
+              &copy; {new Date().getFullYear()} Nova Electronics. Built with
+              Mastra, AI&nbsp;SDK&nbsp;&amp;&nbsp;AI&nbsp;Elements.
             </p>
           </div>
         </div>

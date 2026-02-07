@@ -56,14 +56,7 @@ export function Navbar({ active }: NavbarProps) {
         {/* Links */}
         <div className="hidden items-center gap-6 text-sm md:flex">
           <Link href="/catalog" className={linkClass('catalog')}>Catalog</Link>
-          <button
-            type="button"
-            onClick={toggle}
-            className="flex items-center gap-1.5 font-medium text-muted-foreground transition-colors duration-200 hover:text-foreground focus-visible:text-foreground focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 rounded-sm"
-          >
-            <SparklesIcon className="size-3.5" aria-hidden="true" />
-            AI&nbsp;Chat
-          </button>
+
         </div>
 
         {/* Icons */}
@@ -76,6 +69,14 @@ export function Navbar({ active }: NavbarProps) {
             aria-label="Open AI Chat"
           >
             <SparklesIcon className="size-[18px]" aria-hidden="true" />
+          </button>
+          <button
+            type="button"
+            onClick={toggle}
+            className="flex items-center gap-1.5 font-medium text-muted-foreground transition-colors duration-200 hover:text-foreground focus-visible:text-foreground focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 rounded-sm"
+          >
+            <SparklesIcon className="size-3.5" aria-hidden="true" />
+            AI&nbsp;Chat
           </button>
           <button
             type="button"
