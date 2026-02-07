@@ -1,0 +1,18 @@
+[
+  { "id": "asus", "name": "ASUS" },
+  { "id": "corsair", "name": "Corsair" },
+  { "id": "samsung", "name": "Samsung" },
+  { "id": "logitech", "name": "Logitech" },
+  { "id": "msi", "name": "MSI" },
+  { "id": "kingston", "name": "Kingston" },
+  { "id": "amd", "name": "AMD" },
+  { "id": "apple", "name": "Apple" },
+  { "id": "lenovo", "name": "Lenovo" },
+  { "id": "lg", "name": "LG" },
+  { "id": "razer", "name": "Razer" },
+  { "id": "nvidia", "name": "NVIDIA" },
+  { "id": "crucial", "name": "Crucial" },
+  { "id": "seagate", "name": "Seagate" },
+  { "id": "western-digital", "name": "Western Digital" },
+  { "id": "steelseries", "name": "SteelSeries" }
+]

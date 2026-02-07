@@ -1,0 +1,50 @@
+[
+  {
+    "id": "laptops",
+    "name": "Laptops",
+    "slug": "laptops",
+    "description": "Portátiles para gaming, trabajo y uso diario",
+    "productCount": 423,
+    "emoji": "💻"
+  },
+  {
+    "id": "components",
+    "name": "Components",
+    "slug": "components",
+    "description": "RAM, GPUs, SSDs, CPUs and more",
+    "productCount": 1256,
+    "emoji": "🔧"
+  },
+  {
+    "id": "monitors",
+    "name": "Monitors",
+    "slug": "monitors",
+    "description": "Gaming, professional and ultrawide displays",
+    "productCount": 312,
+    "emoji": "🖥️"
+  },
+  {
+    "id": "peripherals",
+    "name": "Peripherals",
+    "slug": "peripherals",
+    "description": "Keyboards, mice, headsets and more",
+    "productCount": 876,
+    "emoji": "⌨️"
+  },
+  {
+    "id": "storage",
+    "name": "Storage",
+    "slug": "storage",
+    "description": "SSDs, HDDs, NAS and external drives",
+    "productCount": 534,
+    "emoji": "💾"
+  },
+  {
+    "id": "smartphones",
+    "name": "Smartphones",
+    "slug": "smartphones",
+    "description": "Latest phones and tablets from top brands",
+    "productCount": 289,
+    "emoji": "📱"
+  }
+]
