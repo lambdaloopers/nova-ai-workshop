@@ -1,4 +1,14 @@
 import { Agent } from '@mastra/core/agent';
+import {
+  createAnswerRelevancyScorer,
+  createToxicityScorer,
+  createToneScorer,
+  createCompletenessScorer,
+  createPromptAlignmentScorerLLM,
+} from '@mastra/evals/scorers/prebuilt';
+
+// Use a cheap model for scoring to avoid burning tokens
+const JUDGE_MODEL = 'openai/gpt-4.1-nano' as const;
 
 export const chatAgent = new Agent({
   id: 'chat-agent',
@@ -15,4 +25,32 @@ CONSTRAINTS & BOUNDARIES: Avoid providing medical, legal, or financial advice. D
 SUCCESS CRITERIA: Deliver responses that are accurate, relevant, and easy to understand. Achieve high user satisfaction by meeting their informational needs effectively. Continuously improve based on user feedback and performance metrics.
   `,
   model: 'openai/gpt-4o',
+
+  scorers: {
+    // LLM-judged: Is the response relevant to the user's question? (0–1, higher = better)
+    relevancy: {
+      scorer: createAnswerRelevancyScorer({ model: JUDGE_MODEL }),
+      sampling: { type: 'ratio', rate: 1 },
+    },
+    // LLM-judged: Does the response contain toxic/harmful content? (0–1, lower = better)
+    toxicity: {
+      scorer: createToxicityScorer({ model: JUDGE_MODEL }),
+      sampling: { type: 'ratio', rate: 1 },
+    },
+    // LLM-judged: Does the response follow the system prompt instructions? (0–1, higher = better)
+    promptAlignment: {
+      scorer: createPromptAlignmentScorerLLM({ model: JUDGE_MODEL }),
+      sampling: { type: 'ratio', rate: 1 },
+    },
+    // Code-based (no LLM): Is the tone consistent throughout the response? (0–1, higher = better)
+    tone: {
+      scorer: createToneScorer(),
+      sampling: { type: 'ratio', rate: 1 },
+    },
+    // Code-based (no LLM): Does the response address all elements from the input? (0–1, higher = better)
+    completeness: {
+      scorer: createCompletenessScorer(),
+      sampling: { type: 'ratio', rate: 1 },
+    },
+  },
 });

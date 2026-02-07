@@ -1,20 +1,25 @@
-import { join } from "node:path";
 import { Mastra } from "@mastra/core/mastra";
 import { LibSQLStore } from "@mastra/libsql";
 import {
-  SamplingStrategyType,
   DefaultExporter,
   Observability,
+  SamplingStrategyType,
   SensitiveDataFilter,
 } from "@mastra/observability";
+import { simpleAgent } from "./agents/1-simple-agent/simple-agent";
 import { chatAgent } from "./agents/chat-agent";
 
 export const mastra = new Mastra({
-  agents: { chatAgent },
+  // AGENTS
+  agents: { simpleAgent, chatAgent },
+
+  // STORAGE
   storage: new LibSQLStore({
     id: "mastra-storage",
     url: `file:/home/alex/LambdaLoopers/Code/AI/nova-ai-workshop/ai-ecommerce/mastra.db`,
   }),
+
+  // OBSERVABILITY
   observability: new Observability({
     configs: {
       default: {
@@ -22,12 +27,8 @@ export const mastra = new Mastra({
           type: SamplingStrategyType.ALWAYS,
         },
         serviceName: "mastra",
-        exporters: [
-          new DefaultExporter(), // Persists traces to storage for Mastra Studio
-        ],
-        spanOutputProcessors: [
-          new SensitiveDataFilter(), // Redacts sensitive data like passwords, tokens, keys
-        ],
+        exporters: [new DefaultExporter()],
+        spanOutputProcessors: [new SensitiveDataFilter()],
       },
     },
   }),

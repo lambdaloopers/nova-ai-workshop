@@ -6,7 +6,7 @@ export async function POST(req: Request) {
   const params = await req.json();
   const stream = await handleChatStream({
     mastra,
-    agentId: 'chat-agent',
+    agentId: 'simple-agent',
     params,
   });
   return createUIMessageStreamResponse({ stream });
