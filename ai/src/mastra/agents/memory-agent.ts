@@ -13,8 +13,50 @@ const memory = new Memory({
   }),
   embedder: 'openai/text-embedding-3-small',
   options: {
+    // Conversation history
     lastMessages: 20,
-    semanticRecall: true,
+
+    // Semantic recall
+    semanticRecall: {
+      topK: 3,
+      messageRange: {
+        before: 2,
+        after: 1,
+      },
+    },
+
+    // Working memory
+    workingMemory: {
+      enabled: true,
+      template: `
+# User Profile
+
+## Personal Info
+- Name:
+- Location:
+- Timezone:
+- Occupation:
+
+## Preferences
+- Communication Style:
+- Topics of Interest:
+- Learning Goals:
+
+## Project Information
+- Current Projects:
+  - [Project 1]:
+    - Deadline:
+    - Status:
+  - [Project 2]:
+    - Deadline:
+    - Status:
+
+## Session State
+- Current Topic:
+- Open Questions:
+- Action Items:
+`,
+    },
   },
 })
 
@@ -24,9 +66,15 @@ export const memoryAgent = new Agent({
   instructions: `
     You are a helpful assistant with advanced memory capabilities.
     You can remember previous conversations and user preferences.
-    When a user shares information about themselves, acknowledge it and remember it for future reference.
-    If asked about something mentioned earlier in the conversation, recall it accurately.
-    You can also recall relevant information from older conversations when appropriate.
+
+    IMPORTANT: You have access to working memory to store persistent information about the user.
+    When you learn something important about the user, update your working memory according to the template.
+
+    Always refer to your working memory before asking for information the user has already provided.
+    Use the information in your working memory to provide personalized responses.
+
+    When the user shares personal information such as their name, location, or preferences,
+    acknowledge it and update your working memory accordingly.
   `,
   model: 'openai/gpt-4.1-mini',
   memory,
