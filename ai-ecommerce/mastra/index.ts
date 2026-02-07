@@ -7,11 +7,16 @@ import {
   SensitiveDataFilter,
 } from "@mastra/observability";
 import { simpleAgent } from "./agents/1-simple-agent/simple-agent";
-import { chatAgent } from "./agents/chat-agent";
+import { agentWithPrompt } from "./agents/2-agent-with-prompt/chat-agent";
+
+export enum AgentId {
+  SIMPLE_AGENT = 'simple-agent',
+  AGENT_WITH_PROMPT = 'agent-with-prompt',
+}
 
 export const mastra = new Mastra({
   // AGENTS
-  agents: { simpleAgent, chatAgent },
+  agents: { simpleAgent, agentWithPrompt },
 
   // STORAGE
   storage: new LibSQLStore({
