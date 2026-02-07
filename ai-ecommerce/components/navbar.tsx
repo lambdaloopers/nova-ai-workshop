@@ -6,16 +6,19 @@ import {
   ZapIcon,
   ShoppingCartIcon,
   UserIcon,
+  SparklesIcon,
 } from 'lucide-react';
 import { useCart } from '@/lib/cart-context';
+import { useChatDrawer } from '@/lib/chat-drawer-context';
 
 interface NavbarProps {
   /** Highlight the active nav item */
-  active?: 'home' | 'catalog' | 'chat';
+  active?: 'home' | 'catalog';
 }
 
 export function Navbar({ active }: NavbarProps) {
   const { totalItems } = useCart();
+  const { toggle } = useChatDrawer();
 
   const linkClass = (name: string) =>
     `font-medium transition-colors duration-200 ${
@@ -43,7 +46,8 @@ export function Navbar({ active }: NavbarProps) {
             <input
               type="search"
               placeholder="Search products, brands, categories…"
-              className="h-10 w-full rounded-lg border bg-background pl-10 pr-4 text-sm outline-none transition-colors duration-200 placeholder:text-muted-foreground focus:border-primary focus:ring-2 focus:ring-primary/20"
+              autoComplete="off"
+              className="h-10 w-full rounded-lg border bg-background pl-10 pr-4 text-sm outline-none transition-colors duration-200 placeholder:text-muted-foreground focus-visible:border-primary focus-visible:ring-2 focus-visible:ring-primary/20"
               aria-label="Search products"
             />
           </div>
@@ -52,11 +56,27 @@ export function Navbar({ active }: NavbarProps) {
         {/* Links */}
         <div className="hidden items-center gap-6 text-sm md:flex">
           <Link href="/catalog" className={linkClass('catalog')}>Catalog</Link>
-          <Link href="/chat" className={linkClass('chat')}>AI&nbsp;Chat</Link>
+          <button
+            type="button"
+            onClick={toggle}
+            className="flex items-center gap-1.5 font-medium text-muted-foreground transition-colors duration-200 hover:text-foreground focus-visible:text-foreground focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 rounded-sm"
+          >
+            <SparklesIcon className="size-3.5" aria-hidden="true" />
+            AI&nbsp;Chat
+          </button>
         </div>
 
         {/* Icons */}
         <div className="ml-auto flex items-center gap-1">
+          {/* Mobile AI Chat button */}
+          <button
+            type="button"
+            onClick={toggle}
+            className="flex h-9 w-9 items-center justify-center rounded-lg text-muted-foreground transition-colors duration-200 hover:bg-muted hover:text-foreground md:hidden"
+            aria-label="Open AI Chat"
+          >
+            <SparklesIcon className="size-[18px]" aria-hidden="true" />
+          </button>
           <button
             type="button"
             className="flex h-9 w-9 items-center justify-center rounded-lg text-muted-foreground transition-colors duration-200 hover:bg-muted hover:text-foreground"

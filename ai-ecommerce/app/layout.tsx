@@ -1,7 +1,9 @@
 import type { Metadata } from "next";
 import { DM_Sans, Outfit, Geist_Mono } from "next/font/google";
 import { CartProvider } from "@/lib/cart-context";
-import { ChatWidget } from "@/components/chat-widget";
+import { ChatDrawerProvider } from "@/lib/chat-drawer-context";
+import { ChatDrawer } from "@/components/chat-drawer";
+import { MainContent } from "@/components/main-content";
 import "./globals.css";
 
 const dmSans = DM_Sans({
@@ -37,8 +39,10 @@ export default function RootLayout({
         className={`${dmSans.variable} ${outfit.variable} ${geistMono.variable} antialiased`}
       >
         <CartProvider>
-          {children}
-          <ChatWidget />
+          <ChatDrawerProvider>
+            <MainContent>{children}</MainContent>
+            <ChatDrawer />
+          </ChatDrawerProvider>
         </CartProvider>
       </body>
     </html>
