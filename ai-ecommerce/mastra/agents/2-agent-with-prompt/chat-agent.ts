@@ -1,4 +1,5 @@
 import { Agent } from "@mastra/core/agent";
+import { ModerationProcessor } from "@mastra/core/processors";
 
 export const agentWithPrompt = new Agent({
   id: "agent-with-prompt",
@@ -15,4 +16,12 @@ CONSTRAINTS & BOUNDARIES: Avoid providing medical, legal, or financial advice. D
 SUCCESS CRITERIA: Deliver responses that are accurate, relevant, and easy to understand. Achieve high user satisfaction by meeting their informational needs effectively. Continuously improve based on user feedback and performance metrics.
   `,
   model: "openai/gpt-4o",
+  inputProcessors: [
+    new ModerationProcessor({
+      model: "openai/gpt-4.1-nano",
+      categories: ["hate", "harassment", "violence"],
+      threshold: 0.7,
+      strategy: "block",
+    }),
+  ],
 });
