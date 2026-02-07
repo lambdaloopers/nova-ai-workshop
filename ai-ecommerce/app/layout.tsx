@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { DM_Sans, Outfit, Geist_Mono } from "next/font/google";
+import { CartProvider } from "@/lib/cart-context";
 import { ChatWidget } from "@/components/chat-widget";
 import "./globals.css";
 
@@ -35,8 +36,10 @@ export default function RootLayout({
       <body
         className={`${dmSans.variable} ${outfit.variable} ${geistMono.variable} antialiased`}
       >
-        {children}
-        <ChatWidget />
+        <CartProvider>
+          {children}
+          <ChatWidget />
+        </CartProvider>
       </body>
     </html>
   );

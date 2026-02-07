@@ -1,7 +1,13 @@
-import { StarIcon, TruckIcon } from "lucide-react";
-import type { Product } from "@/lib/types";
+'use client';
+
+import Link from 'next/link';
+import { StarIcon, TruckIcon, ShoppingCartIcon } from 'lucide-react';
+import { useCart } from '@/lib/cart-context';
+import type { Product } from '@/lib/types';
+import { categoryEmoji } from '@/lib/utils';
 
 export function ProductCard({ product }: { product: Product }) {
+  const { addItem } = useCart();
   const hasDiscount = product.discount !== null && product.discount > 0;
 
   return (
@@ -25,17 +31,15 @@ export function ProductCard({ product }: { product: Product }) {
         </div>
       )}
 
-      {/* Image placeholder */}
-      <div className="relative flex aspect-square items-center justify-center bg-muted/50 p-6 transition-colors duration-200 group-hover:bg-muted/80">
-        <div className="text-4xl select-none opacity-40">
-          {product.categoryId === "laptops" && "💻"}
-          {product.categoryId === "components" && "🔧"}
-          {product.categoryId === "monitors" && "🖥️"}
-          {product.categoryId === "peripherals" && "⌨️"}
-          {product.categoryId === "storage" && "💾"}
-          {product.categoryId === "smartphones" && "📱"}
-        </div>
-      </div>
+      {/* Image placeholder — clickable */}
+      <Link
+        href={`/product/${product.slug}`}
+        className="relative flex aspect-square items-center justify-center bg-muted/50 p-6 transition-colors duration-200 group-hover:bg-muted/80"
+      >
+        <span className="text-4xl select-none opacity-40" aria-hidden="true">
+          {categoryEmoji(product.categoryId)}
+        </span>
+      </Link>
 
       {/* Content */}
       <div className="flex flex-1 flex-col gap-2 p-4">
@@ -44,10 +48,12 @@ export function ProductCard({ product }: { product: Product }) {
           {product.brand.replace("-", " ")}
         </p>
 
-        {/* Name */}
-        <h3 className="line-clamp-2 text-sm font-medium leading-snug min-w-0">
-          {product.name}
-        </h3>
+        {/* Name — clickable */}
+        <Link href={`/product/${product.slug}`} className="min-w-0">
+          <h3 className="line-clamp-2 text-sm font-medium leading-snug hover:text-primary transition-colors duration-200">
+            {product.name}
+          </h3>
+        </Link>
 
         {/* Rating */}
         <div className="flex items-center gap-1.5">
@@ -63,11 +69,11 @@ export function ProductCard({ product }: { product: Product }) {
         {/* Price */}
         <div className="mt-auto flex items-baseline gap-2 pt-1">
           <span className="text-lg font-bold tabular-nums">
-            {product.price.toLocaleString("es-ES", { style: "currency", currency: "EUR" })}
+            {product.price.toLocaleString('es-ES', { style: 'currency', currency: 'EUR' })}
           </span>
           {product.originalPrice && (
             <span className="text-sm text-muted-foreground line-through tabular-nums">
-              {product.originalPrice.toLocaleString("es-ES", { style: "currency", currency: "EUR" })}
+              {product.originalPrice.toLocaleString('es-ES', { style: 'currency', currency: 'EUR' })}
             </span>
           )}
         </div>
@@ -81,6 +87,16 @@ export function ProductCard({ product }: { product: Product }) {
             </span>
           </div>
         )}
+
+        {/* Add to cart */}
+        <button
+          type="button"
+          onClick={() => addItem(product)}
+          className="mt-2 flex h-9 items-center justify-center gap-2 rounded-lg border bg-background text-sm font-medium transition-colors duration-200 hover:bg-primary hover:text-primary-foreground hover:border-primary focus-visible:ring-2 focus-visible:ring-ring"
+        >
+          <ShoppingCartIcon className="size-4" aria-hidden="true" />
+          Add to Cart
+        </button>
       </div>
     </div>
   );

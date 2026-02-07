@@ -1,15 +1,13 @@
 import {
-  SearchIcon,
-  ZapIcon,
   ArrowRightIcon,
-  ShoppingCartIcon,
-  UserIcon,
   SparklesIcon,
   TruckIcon,
   ShieldCheckIcon,
   RotateCcwIcon,
+  ZapIcon,
 } from "lucide-react";
 import Link from "next/link";
+import { Navbar } from "@/components/navbar";
 import { ProductCard } from "@/components/product-card";
 import categoriesData from "@/data/categories.json";
 import productsData from "@/data/products.json";
@@ -42,62 +40,7 @@ export default function Home() {
         Skip to main content
       </a>
 
-      {/* ── Nav ── */}
-      <nav className="sticky top-0 z-40 border-b bg-card/80 backdrop-blur-lg">
-        <div className="mx-auto flex h-16 max-w-7xl items-center gap-6 px-6">
-          {/* Logo */}
-          <Link href="/" className="flex items-center gap-2 shrink-0">
-            <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-primary">
-              <ZapIcon className="size-4 text-primary-foreground" aria-hidden="true" />
-            </div>
-            <span className="font-display text-xl font-bold tracking-tight">Nova</span>
-          </Link>
-
-          {/* Search */}
-          <div className="hidden flex-1 md:block max-w-xl">
-            <div className="relative">
-              <SearchIcon className="pointer-events-none absolute left-3 top-1/2 size-4 -translate-y-1/2 text-muted-foreground" aria-hidden="true" />
-              <input
-                type="search"
-                placeholder="Search products, brands, categories…"
-                className="h-10 w-full rounded-lg border bg-background pl-10 pr-4 text-sm outline-none transition-colors duration-200 placeholder:text-muted-foreground focus:border-primary focus:ring-2 focus:ring-primary/20"
-                aria-label="Search products"
-              />
-            </div>
-          </div>
-
-          {/* Nav links */}
-          <div className="hidden items-center gap-6 text-sm md:flex">
-            <Link href="/catalog" className="font-medium text-muted-foreground transition-colors duration-200 hover:text-foreground">
-              Catalog
-            </Link>
-            <Link href="/chat" className="font-medium text-muted-foreground transition-colors duration-200 hover:text-foreground">
-              AI&nbsp;Chat
-            </Link>
-          </div>
-
-          {/* Icons */}
-          <div className="ml-auto flex items-center gap-1">
-            <button
-              type="button"
-              className="flex h-9 w-9 items-center justify-center rounded-lg text-muted-foreground transition-colors duration-200 hover:bg-muted hover:text-foreground"
-              aria-label="My account"
-            >
-              <UserIcon className="size-[18px]" aria-hidden="true" />
-            </button>
-            <button
-              type="button"
-              className="relative flex h-9 w-9 items-center justify-center rounded-lg text-muted-foreground transition-colors duration-200 hover:bg-muted hover:text-foreground"
-              aria-label="Shopping cart"
-            >
-              <ShoppingCartIcon className="size-[18px]" aria-hidden="true" />
-              <span className="absolute -right-0.5 -top-0.5 flex h-4 w-4 items-center justify-center rounded-full bg-primary text-[10px] font-bold text-primary-foreground tabular-nums">
-                0
-              </span>
-            </button>
-          </div>
-        </div>
-      </nav>
+      <Navbar active="home" />
 
       <main id="main">
         {/* ── Hero ── */}
