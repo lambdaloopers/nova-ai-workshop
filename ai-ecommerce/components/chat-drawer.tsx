@@ -13,6 +13,7 @@ import {
   PANEL_MIN_WIDTH,
   useChatDrawer,
 } from "@/lib/chat-drawer-context";
+import { useAgent } from "@/lib/agent-context";
 import { cn } from "@/lib/utils";
 
 /**
@@ -21,6 +22,7 @@ import { cn } from "@/lib/utils";
  */
 export function ChatDrawer() {
   const { open, width, setOpen, setWidth } = useChatDrawer();
+  const { agentId } = useAgent();
   const [dragging, setDragging] = useState(false);
   const panelRef = useRef<HTMLDivElement>(null);
 
@@ -153,7 +155,7 @@ export function ChatDrawer() {
         </div>
 
         {/* ── Chat logic (messages + input) ── */}
-        <ChatPanel />
+        <ChatPanel key={agentId} />
       </aside>
 
       {/* Block text selection while resizing */}

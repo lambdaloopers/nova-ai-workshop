@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { DM_Sans, Outfit, Geist_Mono } from "next/font/google";
 import { CartProvider } from "@/lib/cart-context";
 import { ChatDrawerProvider } from "@/lib/chat-drawer-context";
+import { AgentProvider } from "@/lib/agent-context";
 import { ChatDrawer } from "@/components/chat-drawer";
 import { MainContent } from "@/components/main-content";
 import "./globals.css";
@@ -38,12 +39,14 @@ export default function RootLayout({
       <body
         className={`${dmSans.variable} ${outfit.variable} ${geistMono.variable} antialiased`}
       >
-        <CartProvider>
-          <ChatDrawerProvider>
-            <MainContent>{children}</MainContent>
-            <ChatDrawer />
-          </ChatDrawerProvider>
-        </CartProvider>
+        <AgentProvider>
+          <CartProvider>
+            <ChatDrawerProvider>
+              <MainContent>{children}</MainContent>
+              <ChatDrawer />
+            </ChatDrawerProvider>
+          </CartProvider>
+        </AgentProvider>
       </body>
     </html>
   );

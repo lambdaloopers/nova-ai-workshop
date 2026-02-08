@@ -10,6 +10,7 @@ import {
 } from 'lucide-react';
 import { useCart } from '@/lib/cart-context';
 import { useChatDrawer } from '@/lib/chat-drawer-context';
+import { AgentSelector } from '@/components/agent-selector';
 
 interface NavbarProps {
   /** Highlight the active nav item */
@@ -56,7 +57,7 @@ export function Navbar({ active }: NavbarProps) {
         {/* Links */}
         <div className="hidden items-center gap-6 text-sm md:flex">
           <Link href="/catalog" className={linkClass('catalog')}>Catalog</Link>
-
+          <AgentSelector />
         </div>
 
         {/* Icons */}

@@ -4,6 +4,7 @@ import { useState } from 'react';
 import { DefaultChatTransport } from 'ai';
 import { useChat } from '@ai-sdk/react';
 import type { PromptInputMessage } from '@/components/ai-elements/prompt-input';
+import { useAgent } from '@/lib/agent-context';
 import { ChatMessages } from './chat-messages';
 import { ChatInput } from './chat-input';
 
@@ -19,9 +20,10 @@ const suggestions = [
  */
 export function ChatPanel() {
   const [input, setInput] = useState('');
+  const { agentId } = useAgent();
 
   const { messages, sendMessage, status, stop } = useChat({
-    transport: new DefaultChatTransport({ api: '/api/chat' }),
+    transport: new DefaultChatTransport({ api: `/api/chat?agentId=${agentId}` }),
   });
 
   const handleSubmit = (message: PromptInputMessage) => {
