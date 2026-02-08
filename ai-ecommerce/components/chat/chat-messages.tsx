@@ -55,32 +55,50 @@ export function ChatMessages({
             </div>
           </div>
         ) : (
-          messages.map((message) => (
-            <Message from={message.role} key={message.id}>
-              <MessageContent
-                className={cn(
-                  "group-[.is-user]:rounded-2xl group-[.is-user]:rounded-tr-md group-[.is-user]:bg-primary group-[.is-user]:text-primary-foreground group-[.is-user]:px-3.5 group-[.is-user]:py-2",
-                  "group-[.is-assistant]:bg-transparent group-[.is-assistant]:p-0",
-                )}
-              >
-                {message.parts?.map((part, i) => {
-                  switch (part.type) {
-                    case "text":
-                      return (
-                        <MessageResponse key={`${message.id}-${i}`}>
-                          {(part as { text: string }).text}
-                        </MessageResponse>
-                      );
-                    default:
-                      if (isToolUIPart(part)) {
-                        return <ToolRenderer key={`${message.id}-${i}`} part={part} />;
-                      }
-                      return null;
-                  }
-                })}
-              </MessageContent>
-            </Message>
-          ))
+          messages.map((message) => {
+            // Check if this message contains an ask-user-question tool call
+            const hasAskUserQuestion = message.parts?.some(
+              (part) => isToolUIPart(part) && part.type === 'tool-askUserQuestion'
+            );
+
+            return (
+              <Message from={message.role} key={message.id}>
+                <MessageContent
+                  className={cn(
+                    "group-[.is-user]:rounded-2xl group-[.is-user]:rounded-tr-md group-[.is-user]:bg-primary group-[.is-user]:text-primary-foreground group-[.is-user]:px-3.5 group-[.is-user]:py-2",
+                    "group-[.is-assistant]:bg-transparent group-[.is-assistant]:p-0",
+                  )}
+                >
+                  {message.parts?.map((part, i) => {
+                    switch (part.type) {
+                      case "text":
+                        // Hide text parts if the message contains ask-user-question
+                        // (the tool displays its own UI with the question)
+                        if (hasAskUserQuestion) {
+                          return null;
+                        }
+                        return (
+                          <MessageResponse key={`${message.id}-${i}`}>
+                            {(part as { text: string }).text}
+                          </MessageResponse>
+                        );
+                      default:
+                        if (isToolUIPart(part)) {
+                          return (
+                            <ToolRenderer
+                              key={`${message.id}-${i}`}
+                              part={part}
+                              onSendMessage={onSuggestion}
+                            />
+                          );
+                        }
+                        return null;
+                    }
+                  })}
+                </MessageContent>
+              </Message>
+            );
+          })
         )}
         {(status === "submitted" || status === "streaming") &&
           messages.at(-1)?.role !== "assistant" && (

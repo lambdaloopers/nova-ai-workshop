@@ -2,6 +2,7 @@ import { Agent } from '@mastra/core/agent';
 import { ModerationProcessor } from '@mastra/core/processors';
 import { SYSTEM_PROMPT } from './prompts';
 import { catalogQueryTool } from './tools/catalog-query';
+import { askUserQuestionTool } from './tools/ask-user-question';
 
 export const agentWithTools = new Agent({
   id: 'agent-with-tools',
@@ -10,6 +11,7 @@ export const agentWithTools = new Agent({
   model: 'openai/gpt-4o',
   tools: {
     catalogQuery: catalogQueryTool,
+    askUserQuestion: askUserQuestionTool,
   },
   inputProcessors: [
     new ModerationProcessor({

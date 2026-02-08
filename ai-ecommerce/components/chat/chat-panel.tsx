@@ -22,7 +22,7 @@ export function ChatPanel() {
   const [input, setInput] = useState('');
   const { agentId } = useAgent();
 
-  const { messages, sendMessage, status, stop } = useChat({
+  const { messages, sendMessage, status, stop, addToolOutput } = useChat({
     transport: new DefaultChatTransport({ api: `/api/chat?agentId=${agentId}` }),
   });
 

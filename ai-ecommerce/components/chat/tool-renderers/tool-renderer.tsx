@@ -2,19 +2,21 @@
 
 import type { DynamicToolUIPart, UITool, UIToolInvocation } from 'ai';
 import { ProductSuggestionCard } from './product-suggestion-card';
+import { UserQuestionRenderer } from './user-question-renderer';
 import { Shimmer } from '@/components/ai-elements/shimmer';
 
 type ToolPart = DynamicToolUIPart | ({ type: `tool-${string}` } & UIToolInvocation<UITool>);
 
 interface ToolRendererProps {
   part: ToolPart;
+  onSendMessage?: (text: string) => void;
 }
 
 /**
  * Routes tool invocations to the appropriate renderer based on tool name and state.
  * Add new tool renderers here as you add more tools to agents.
  */
-export function ToolRenderer({ part }: ToolRendererProps) {
+export function ToolRenderer({ part, onSendMessage }: ToolRendererProps) {
   // catalogQuery tool (key name in agent.tools object)
   if (part.type === 'tool-catalogQuery') {
     switch (part.state) {
@@ -66,6 +68,55 @@ export function ToolRenderer({ part }: ToolRendererProps) {
         return (
           <div className="rounded-lg border border-destructive/50 bg-destructive/5 px-3 py-2 text-xs text-destructive">
             Error searching catalog: {part.errorText || 'Unknown error'}
+          </div>
+        );
+    }
+  }
+
+  // askUserQuestion tool (interactive Q&A with suggestions)
+  if (part.type === 'tool-askUserQuestion') {
+    switch (part.state) {
+      case 'input-streaming':
+      case 'input-available':
+        return (
+          <div className="flex flex-col gap-2">
+            <Shimmer className="text-xs">Preparing question…</Shimmer>
+          </div>
+        );
+
+      case 'output-available': {
+        const output = part.output as {
+          question: string;
+          suggestions: string[];
+          waitingForUserResponse?: boolean;
+        };
+
+        // Show the interactive question UI
+        if (output.waitingForUserResponse) {
+          return (
+            <UserQuestionRenderer
+              question={output.question}
+              suggestions={output.suggestions}
+              onSelectSuggestion={(answer) => {
+                // Send the user's answer as a regular message
+                onSendMessage?.(answer);
+              }}
+            />
+          );
+        }
+
+        // Fallback
+        return (
+          <div className="rounded-lg border bg-muted/30 px-3 py-2 text-xs text-muted-foreground">
+            Question: {output.question}
+          </div>
+        );
+      }
+
+      case 'output-error':
+        return (
+          <div className="rounded-lg border border-destructive/50 bg-destructive/5 px-3 py-2 text-xs text-destructive">
+            Error: {part.errorText || 'Failed to ask question'}
           </div>
         );
     }
