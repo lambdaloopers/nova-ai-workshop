@@ -1,12 +1,6 @@
 "use client";
 
-import {
-  DynamicToolUIPart,
-  isToolUIPart,
-  UITool,
-  UIToolInvocation,
-  type UIMessage,
-} from "ai";
+import { isToolUIPart, type UIMessage } from "ai";
 import { SparklesIcon } from "lucide-react";
 
 import {
@@ -22,6 +16,7 @@ import {
 } from "@/components/ai-elements/message";
 import { Shimmer } from "@/components/ai-elements/shimmer";
 import { cn } from "@/lib/utils";
+import { ToolRenderer } from "./tool-renderers/tool-renderer";
 
 interface ChatMessagesProps {
   messages: UIMessage[];
@@ -36,17 +31,6 @@ export function ChatMessages({
   suggestions,
   onSuggestion,
 }: ChatMessagesProps) {
-  console.log(messages);
-
-  const renderTool = (
-    part:
-      | DynamicToolUIPart
-      | ({ type: `tool-${string}` } & UIToolInvocation<UITool>),
-    key: string,
-  ) => {
-    return <div key={key}>TOOL {part.type}</div>;
-  };
-
   return (
     <Conversation className="flex-1">
       <ConversationContent className="gap-4 p-4">
@@ -89,7 +73,7 @@ export function ChatMessages({
                       );
                     default:
                       if (isToolUIPart(part)) {
-                        return renderTool(part, `${message.id}-${i}`);
+                        return <ToolRenderer key={`${message.id}-${i}`} part={part} />;
                       }
                       return null;
                   }
