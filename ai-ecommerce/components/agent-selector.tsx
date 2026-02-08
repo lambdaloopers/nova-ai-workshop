@@ -8,7 +8,8 @@ import { useState, useRef, useEffect } from 'react';
 
 const AGENTS = [
   { id: AGENT_IDS.SIMPLE_AGENT, label: '1. Simple Agent', description: 'Basic chat agent' },
-  { id: AGENT_IDS.AGENT_WITH_PROMPT, label: '2. Personal Shopper', description: 'Sales-focused agent' },
+  { id: AGENT_IDS.AGENT_WITH_PROMPT, label: '2. Agent with Prompt', description: 'Sales-focused system prompt' },
+  { id: AGENT_IDS.AGENT_WITH_TOOLS, label: '3. Agent with Tools', description: 'Catalog query tool' },
 ];
 
 export function AgentSelector() {
