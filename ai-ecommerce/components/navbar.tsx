@@ -7,10 +7,13 @@ import {
   ShoppingCartIcon,
   UserIcon,
   SparklesIcon,
+  LogOutIcon,
 } from 'lucide-react';
 import { useCart } from '@/lib/cart-context';
 import { useChatDrawer } from '@/lib/chat-drawer-context';
+import { useAuth } from '@/lib/auth-context';
 import { AgentSelector } from '@/components/agent-selector';
+import { useState, useRef, useEffect } from 'react';
 
 interface NavbarProps {
   /** Highlight the active nav item */
@@ -20,11 +23,28 @@ interface NavbarProps {
 export function Navbar({ active }: NavbarProps) {
   const { totalItems } = useCart();
   const { toggle } = useChatDrawer();
+  const { user, logout } = useAuth();
+  const [userMenuOpen, setUserMenuOpen] = useState(false);
+  const menuRef = useRef<HTMLDivElement>(null);
 
   const linkClass = (name: string) =>
     `font-medium transition-colors duration-200 ${
       active === name ? 'text-foreground' : 'text-muted-foreground hover:text-foreground'
     }`;
+
+  // Close menu when clicking outside
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (menuRef.current && !menuRef.current.contains(event.target as Node)) {
+        setUserMenuOpen(false);
+      }
+    };
+
+    if (userMenuOpen) {
+      document.addEventListener('mousedown', handleClickOutside);
+      return () => document.removeEventListener('mousedown', handleClickOutside);
+    }
+  }, [userMenuOpen]);
 
   return (
     <nav className="sticky top-0 z-40 border-b bg-card/80 backdrop-blur-lg">
@@ -79,13 +99,49 @@ export function Navbar({ active }: NavbarProps) {
             <SparklesIcon className="size-3.5" aria-hidden="true" />
             AI&nbsp;Chat
           </button>
-          <button
-            type="button"
-            className="flex h-9 w-9 items-center justify-center rounded-lg text-muted-foreground transition-colors duration-200 hover:bg-muted hover:text-foreground"
-            aria-label="My account"
-          >
-            <UserIcon className="size-[18px]" aria-hidden="true" />
-          </button>
+
+          {/* User Menu */}
+          {user ? (
+            <div className="relative" ref={menuRef}>
+              <button
+                type="button"
+                onClick={() => setUserMenuOpen(!userMenuOpen)}
+                className="flex h-9 items-center gap-2 rounded-lg px-2.5 text-muted-foreground transition-colors duration-200 hover:bg-muted hover:text-foreground"
+                aria-label="User menu"
+              >
+                <UserIcon className="size-[18px]" aria-hidden="true" />
+                <span className="hidden text-sm font-medium md:inline">{user.name}</span>
+              </button>
+
+              {userMenuOpen && (
+                <div className="absolute right-0 top-full mt-2 w-56 rounded-xl border bg-card p-1.5 shadow-lg">
+                  <div className="px-3 py-2 text-xs text-muted-foreground border-b mb-1.5 pb-2">
+                    {user.email}
+                  </div>
+                  <button
+                    type="button"
+                    onClick={() => {
+                      logout();
+                      setUserMenuOpen(false);
+                    }}
+                    className="flex w-full items-center gap-2 rounded-lg px-3 py-2 text-sm font-medium text-foreground transition-colors duration-200 hover:bg-muted"
+                  >
+                    <LogOutIcon className="size-4" aria-hidden="true" />
+                    Sign out
+                  </button>
+                </div>
+              )}
+            </div>
+          ) : (
+            <Link
+              href="/login"
+              className="flex h-9 items-center gap-2 rounded-lg px-3 text-sm font-medium text-muted-foreground transition-colors duration-200 hover:bg-muted hover:text-foreground"
+            >
+              <UserIcon className="size-[18px]" aria-hidden="true" />
+              <span className="hidden md:inline">Sign in</span>
+            </Link>
+          )}
+
           <Link
             href="/cart"
             className="relative flex h-9 w-9 items-center justify-center rounded-lg text-muted-foreground transition-colors duration-200 hover:bg-muted hover:text-foreground"
