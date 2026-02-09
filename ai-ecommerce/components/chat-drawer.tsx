@@ -4,16 +4,21 @@ import {
   MessageSquareIcon,
   PanelRightCloseIcon,
   SparklesIcon,
+  HistoryIcon,
+  PlusIcon,
 } from "lucide-react";
 import { useCallback, useEffect, useRef, useState } from "react";
 
 import { ChatPanel } from "@/components/chat/chat-panel";
+import { ThreadHistory } from "@/components/chat/thread-history";
 import {
   PANEL_MAX_WIDTH,
   PANEL_MIN_WIDTH,
   useChatDrawer,
 } from "@/lib/chat-drawer-context";
 import { useAgent } from "@/lib/agent-context";
+import { useThread } from "@/lib/thread-context";
+import { useAuth } from "@/lib/auth-context";
 import { cn } from "@/lib/utils";
 
 /**
@@ -23,7 +28,10 @@ import { cn } from "@/lib/utils";
 export function ChatDrawer() {
   const { open, width, setOpen, setWidth } = useChatDrawer();
   const { agentId } = useAgent();
+  const { createThread, activeThreadId } = useThread();
+  const { user } = useAuth();
   const [dragging, setDragging] = useState(false);
+  const [showHistory, setShowHistory] = useState(false);
   const panelRef = useRef<HTMLDivElement>(null);
 
   // Close on Escape
@@ -144,18 +152,52 @@ export function ChatDrawer() {
               </p>
             </div>
           </div>
-          <button
-            type="button"
-            onClick={() => setOpen(false)}
-            className="flex h-7 w-7 shrink-0 items-center justify-center rounded-md text-muted-foreground transition-colors duration-200 hover:bg-muted hover:text-foreground focus-visible:ring-2 focus-visible:ring-ring"
-            aria-label="Close chat"
-          >
-            <PanelRightCloseIcon className="size-4" aria-hidden="true" />
-          </button>
+          <div className="flex items-center gap-1">
+            {user && (
+              <>
+                <button
+                  type="button"
+                  onClick={() => createThread()}
+                  className="flex h-7 w-7 shrink-0 items-center justify-center rounded-md text-muted-foreground transition-colors duration-200 hover:bg-muted hover:text-foreground focus-visible:ring-2 focus-visible:ring-ring"
+                  aria-label="New conversation"
+                >
+                  <PlusIcon className="size-4" aria-hidden="true" />
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setShowHistory(!showHistory)}
+                  className={cn(
+                    "flex h-7 w-7 shrink-0 items-center justify-center rounded-md transition-colors duration-200 focus-visible:ring-2 focus-visible:ring-ring",
+                    showHistory
+                      ? "bg-primary/10 text-primary"
+                      : "text-muted-foreground hover:bg-muted hover:text-foreground"
+                  )}
+                  aria-label="Toggle history"
+                >
+                  <HistoryIcon className="size-4" aria-hidden="true" />
+                </button>
+              </>
+            )}
+            <button
+              type="button"
+              onClick={() => setOpen(false)}
+              className="flex h-7 w-7 shrink-0 items-center justify-center rounded-md text-muted-foreground transition-colors duration-200 hover:bg-muted hover:text-foreground focus-visible:ring-2 focus-visible:ring-ring"
+              aria-label="Close chat"
+            >
+              <PanelRightCloseIcon className="size-4" aria-hidden="true" />
+            </button>
+          </div>
         </div>
 
+        {/* ── Panel de historial ── */}
+        {showHistory && (
+          <div className="border-b bg-muted/30 max-h-64 overflow-y-auto">
+            <ThreadHistory />
+          </div>
+        )}
+
         {/* ── Chat logic (messages + input) ── */}
-        <ChatPanel key={agentId} />
+        <ChatPanel key={activeThreadId || agentId} />
       </aside>
 
       {/* Block text selection while resizing */}

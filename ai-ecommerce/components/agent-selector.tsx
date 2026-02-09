@@ -7,9 +7,10 @@ import { cn } from '@/lib/utils';
 import { useState, useRef, useEffect } from 'react';
 
 const AGENTS = [
-  { id: AGENT_IDS.SIMPLE_AGENT, label: '1. Simple Agent', description: 'Basic chat agent' },
-  { id: AGENT_IDS.AGENT_WITH_PROMPT, label: '2. Agent with Prompt', description: 'Sales-focused system prompt' },
-  { id: AGENT_IDS.AGENT_WITH_TOOLS, label: '3. Agent with Tools', description: 'Catalog query tool' },
+  { id: AGENT_IDS.SIMPLE_AGENT, label: '1. Simple Agent', description: 'Basic chat' },
+  { id: AGENT_IDS.AGENT_WITH_PROMPT, label: '2. Agent with Prompt', description: 'Sales-focused' },
+  { id: AGENT_IDS.AGENT_WITH_TOOLS, label: '3. Agent with Tools', description: 'Catalog query' },
+  { id: AGENT_IDS.AGENT_WITH_MEMORY, label: '4. Agent with Memory', description: 'Persistent history' },
 ];
 
 export function AgentSelector() {

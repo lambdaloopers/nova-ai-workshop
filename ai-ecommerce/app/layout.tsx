@@ -4,6 +4,7 @@ import { AuthProvider } from "@/lib/auth-context";
 import { CartProvider } from "@/lib/cart-context";
 import { ChatDrawerProvider } from "@/lib/chat-drawer-context";
 import { AgentProvider } from "@/lib/agent-context";
+import { ThreadProvider } from "@/lib/thread-context";
 import { ChatDrawer } from "@/components/chat-drawer";
 import { MainContent } from "@/components/main-content";
 import "./globals.css";
@@ -42,12 +43,14 @@ export default function RootLayout({
       >
         <AuthProvider>
           <AgentProvider>
-            <CartProvider>
-              <ChatDrawerProvider>
-                <MainContent>{children}</MainContent>
-                <ChatDrawer />
-              </ChatDrawerProvider>
-            </CartProvider>
+            <ThreadProvider>
+              <CartProvider>
+                <ChatDrawerProvider>
+                  <MainContent>{children}</MainContent>
+                  <ChatDrawer />
+                </ChatDrawerProvider>
+              </CartProvider>
+            </ThreadProvider>
           </AgentProvider>
         </AuthProvider>
       </body>
