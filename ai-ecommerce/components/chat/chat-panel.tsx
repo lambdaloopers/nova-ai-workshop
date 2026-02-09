@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useRef } from 'react';
 import { DefaultChatTransport } from 'ai';
 import { useChat } from '@ai-sdk/react';
 import type { PromptInputMessage } from '@/components/ai-elements/prompt-input';
@@ -23,7 +23,7 @@ const suggestions = [
  */
 export function ChatPanel() {
   const [input, setInput] = useState('');
-  const [pendingMessage, setPendingMessage] = useState<string | null>(null);
+  const pendingMessageRef = useRef<string | null>(null);
   const { agentId } = useAgent();
   const { user } = useAuth();
   const { activeThreadId, createThread } = useThread();
@@ -36,19 +36,11 @@ export function ChatPanel() {
   // Para el threadId: si hay activeThreadId usarlo, si no usar temp
   const threadId = activeThreadId || `temp-${agentId}`;
 
-  const { messages, sendMessage, status, stop, error } = useChat({
+  const { messages, sendMessage, status, stop } = useChat({
     transport: new DefaultChatTransport({ 
       api: `/api/chat?agentId=${agentId}&userId=${userId}&threadId=${threadId}` 
     }),
   });
-
-  // Efecto para enviar mensaje pendiente después de crear thread
-  useEffect(() => {
-    if (pendingMessage && activeThreadId) {
-      sendMessage({ text: pendingMessage });
-      setPendingMessage(null);
-    }
-  }, [pendingMessage, activeThreadId, sendMessage]);
 
   const handleSubmit = async (message: PromptInputMessage) => {
     if (!message.text?.trim()) return;
@@ -56,8 +48,14 @@ export function ChatPanel() {
     // Si no hay thread activo y estamos usando el agente con memoria, crear uno primero
     if (memoryEnabled && !activeThreadId && user) {
       // Guardar el mensaje para enviarlo después de crear el thread
-      setPendingMessage(message.text);
+      pendingMessageRef.current = message.text;
       await createThread();
+      
+      // Enviar el mensaje después de crear el thread
+      if (pendingMessageRef.current) {
+        sendMessage({ text: pendingMessageRef.current });
+        pendingMessageRef.current = null;
+      }
       setInput('');
       return;
     }
@@ -73,7 +71,6 @@ export function ChatPanel() {
         status={status}
         suggestions={suggestions}
         onSuggestion={(text) => sendMessage({ text })}
-        error={error}
       />
       <ChatInput
         value={input}
