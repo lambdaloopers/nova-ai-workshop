@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useRef } from 'react';
+import { useState, useRef, useEffect } from 'react';
 import { DefaultChatTransport } from 'ai';
 import { useChat } from '@ai-sdk/react';
 import type { PromptInputMessage } from '@/components/ai-elements/prompt-input';
@@ -23,6 +23,7 @@ const suggestions = [
  */
 export function ChatPanel() {
   const [input, setInput] = useState('');
+  const [isLoadingHistory, setIsLoadingHistory] = useState(false);
   const pendingMessageRef = useRef<string | null>(null);
   const { agentId } = useAgent();
   const { user } = useAuth();
@@ -36,11 +37,36 @@ export function ChatPanel() {
   // Para el threadId: si hay activeThreadId usarlo, si no usar temp
   const threadId = activeThreadId || `temp-${agentId}`;
 
-  const { messages, sendMessage, status, stop } = useChat({
+  const { messages, sendMessage, status, stop, setMessages } = useChat({
     transport: new DefaultChatTransport({ 
       api: `/api/chat?agentId=${agentId}&userId=${userId}&threadId=${threadId}` 
     }),
   });
+
+  // Load historical messages when switching to an existing thread
+  useEffect(() => {
+    if (!activeThreadId || !memoryEnabled) {
+      return;
+    }
+
+    const loadMessages = async () => {
+      setIsLoadingHistory(true);
+      try {
+        const response = await fetch(`/api/threads/${activeThreadId}/messages`);
+        const data = await response.json();
+        if (data.messages && data.messages.length > 0) {
+          // Use setMessages to load historical messages
+          setMessages(data.messages);
+        }
+      } catch (error) {
+        console.error('[ChatPanel] Error loading thread messages:', error);
+      } finally {
+        setIsLoadingHistory(false);
+      }
+    };
+
+    loadMessages();
+  }, [activeThreadId, memoryEnabled, setMessages]);
 
   const handleSubmit = async (message: PromptInputMessage) => {
     if (!message.text?.trim()) return;
@@ -68,7 +94,7 @@ export function ChatPanel() {
     <>
       <ChatMessages
         messages={messages}
-        status={status}
+        status={isLoadingHistory ? 'loading' : status}
         suggestions={suggestions}
         onSuggestion={(text) => sendMessage({ text })}
       />
