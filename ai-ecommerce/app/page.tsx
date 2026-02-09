@@ -55,10 +55,19 @@ export default function Home() {
 
       <main id="main">
         {/* ── Hero ── */}
-        <section className="relative overflow-hidden border-b bg-linear-to-b from-primary/4 to-transparent">
-          <div className="mx-auto max-w-7xl px-6 py-16 md:py-24">
+        <section className="relative min-h-[28rem] overflow-hidden border-b md:min-h-[32rem]">
+          <Image
+            src="/hero-background.png"
+            alt=""
+            fill
+            className="object-cover object-center"
+            sizes="100vw"
+            priority
+          />
+          <div className="absolute inset-0 bg-background/75 backdrop-blur-[1px]" />
+          <div className="relative z-10 mx-auto flex min-h-[28rem] max-w-7xl flex-col justify-center px-6 py-16 md:min-h-[32rem] md:py-24">
             <div className="mx-auto max-w-2xl text-center">
-              <div className="animate-reveal mb-5 inline-flex items-center gap-2 rounded-full border bg-card px-4 py-1.5 text-xs font-medium text-muted-foreground shadow-sm">
+              <div className="animate-reveal mb-5 inline-flex items-center gap-2 rounded-full border bg-card/90 px-4 py-1.5 text-xs font-medium text-muted-foreground shadow-sm">
                 <SparklesIcon
                   className="size-3.5 text-primary"
                   aria-hidden="true"
