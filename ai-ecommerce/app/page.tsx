@@ -15,6 +15,7 @@ import {
   TruckIcon,
   ZapIcon,
 } from "lucide-react";
+import Image from "next/image";
 import Link from "next/link";
 
 const categories = categoriesData as unknown as Category[];
@@ -141,12 +142,28 @@ export default function Home() {
                 <Link
                   key={cat.id}
                   href={`/catalog?category=${cat.slug}`}
-                  className={`animate-reveal delay-${i + 1} group flex flex-col items-center gap-3 rounded-xl border bg-card p-5 text-center transition-all duration-200 hover:border-primary/30 hover:shadow-md`}
+                  className={`animate-reveal delay-${i + 1} group flex flex-col overflow-hidden rounded-xl border bg-card text-center transition-all duration-200 hover:border-primary/30 hover:shadow-md`}
                 >
-                  <span className="text-3xl" role="img" aria-label={cat.name}>
-                    {cat.emoji}
-                  </span>
-                  <div className="min-w-0">
+                  <div className="relative aspect-square w-full bg-muted">
+                    {cat.landingImage ? (
+                      <Image
+                        src={cat.landingImage}
+                        alt={cat.name}
+                        fill
+                        className="object-cover transition-transform duration-200 group-hover:scale-105"
+                        sizes="(max-width: 640px) 50vw, (max-width: 1024px) 33vw, 16vw"
+                      />
+                    ) : (
+                      <span
+                        className="flex h-full items-center justify-center text-4xl"
+                        role="img"
+                        aria-label={cat.name}
+                      >
+                        {cat.emoji}
+                      </span>
+                    )}
+                  </div>
+                  <div className="min-w-0 p-3">
                     <p className="text-sm font-semibold truncate">{cat.name}</p>
                     <p className="text-xs text-muted-foreground tabular-nums">
                       {cat.productCount.toLocaleString()} products

@@ -5,6 +5,8 @@ export interface Category {
   description: string;
   productCount: number;
   emoji: string;
+  /** Landing page hero image (multiple products). Optional; emoji used in filters. */
+  landingImage?: string;
 }
 
 export interface Brand {

@@ -5,7 +5,8 @@
     "slug": "laptops",
     "description": "Portátiles para gaming, trabajo y uso diario",
     "productCount": 423,
-    "emoji": "💻"
+    "emoji": "💻",
+    "landingImage": "/categories/laptops.png"
   },
   {
     "id": "components",
@@ -13,7 +14,8 @@
     "slug": "components",
     "description": "RAM, GPUs, SSDs, CPUs and more",
     "productCount": 1256,
-    "emoji": "🔧"
+    "emoji": "🔧",
+    "landingImage": "/categories/components.png"
   },
   {
     "id": "monitors",
@@ -21,7 +23,8 @@
     "slug": "monitors",
     "description": "Gaming, professional and ultrawide displays",
     "productCount": 312,
-    "emoji": "🖥️"
+    "emoji": "🖥️",
+    "landingImage": "/categories/monitors.png"
   },
   {
     "id": "peripherals",
@@ -29,7 +32,8 @@
     "slug": "peripherals",
     "description": "Keyboards, mice, headsets and more",
     "productCount": 876,
-    "emoji": "⌨️"
+    "emoji": "⌨️",
+    "landingImage": "/categories/peripherals.png"
   },
   {
     "id": "storage",
@@ -37,7 +41,8 @@
     "slug": "storage",
     "description": "SSDs, HDDs, NAS and external drives",
     "productCount": 534,
-    "emoji": "💾"
+    "emoji": "💾",
+    "landingImage": "/categories/storage.png"
   },
   {
     "id": "smartphones",
@@ -45,6 +50,7 @@
     "slug": "smartphones",
     "description": "Latest phones and tablets from top brands",
     "productCount": 289,
-    "emoji": "📱"
+    "emoji": "📱",
+    "landingImage": "/categories/smartphones.png"
   }
 ]
