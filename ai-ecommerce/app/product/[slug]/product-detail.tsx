@@ -1,23 +1,23 @@
-'use client';
+"use client";
 
-import { useState } from 'react';
-import Link from 'next/link';
+import { Navbar } from "@/components/navbar";
+import { ProductCard } from "@/components/product-card";
+import { useCart } from "@/lib/cart-context";
+import type { Category, Product } from "@/lib/types";
+import { formatEUR } from "@/lib/utils";
 import {
+  CheckIcon,
   ChevronRightIcon,
-  StarIcon,
-  TruckIcon,
-  ShieldCheckIcon,
-  RotateCcwIcon,
   MinusIcon,
   PlusIcon,
+  RotateCcwIcon,
+  ShieldCheckIcon,
   ShoppingCartIcon,
-  CheckIcon,
-} from 'lucide-react';
-import { Navbar } from '@/components/navbar';
-import { ProductCard } from '@/components/product-card';
-import { useCart } from '@/lib/cart-context';
-import { categoryEmoji, formatEUR } from '@/lib/utils';
-import type { Product, Category } from '@/lib/types';
+  StarIcon,
+  TruckIcon,
+} from "lucide-react";
+import Link from "next/link";
+import { useState } from "react";
 
 interface Props {
   product: Product;
@@ -44,20 +44,38 @@ export function ProductDetail({ product, category, related }: Props) {
 
       <div className="mx-auto max-w-7xl px-6 py-6">
         {/* Breadcrumbs */}
-        <nav aria-label="Breadcrumb" className="mb-8 flex items-center gap-1.5 text-sm text-muted-foreground">
-          <Link href="/" className="transition-colors duration-200 hover:text-foreground">Home</Link>
+        <nav
+          aria-label="Breadcrumb"
+          className="mb-8 flex items-center gap-1.5 text-sm text-muted-foreground"
+        >
+          <Link
+            href="/"
+            className="transition-colors duration-200 hover:text-foreground"
+          >
+            Home
+          </Link>
           <ChevronRightIcon className="size-3.5" aria-hidden="true" />
-          <Link href="/catalog" className="transition-colors duration-200 hover:text-foreground">Catalog</Link>
+          <Link
+            href="/catalog"
+            className="transition-colors duration-200 hover:text-foreground"
+          >
+            Catalog
+          </Link>
           {category && (
             <>
               <ChevronRightIcon className="size-3.5" aria-hidden="true" />
-              <Link href={`/catalog?category=${category.slug}`} className="transition-colors duration-200 hover:text-foreground">
+              <Link
+                href={`/catalog?category=${category.slug}`}
+                className="transition-colors duration-200 hover:text-foreground"
+              >
                 {category.name}
               </Link>
             </>
           )}
           <ChevronRightIcon className="size-3.5" aria-hidden="true" />
-          <span className="font-medium text-foreground truncate max-w-[200px]">{product.name}</span>
+          <span className="font-medium text-foreground truncate max-w-[200px]">
+            {product.name}
+          </span>
         </nav>
 
         {/* Product layout */}
@@ -82,16 +100,18 @@ export function ProductDetail({ product, category, related }: Props) {
                 ))}
               </div>
             )}
-            <span className="text-8xl select-none opacity-30" aria-hidden="true">
-              {categoryEmoji(product.categoryId)}
-            </span>
+            <img
+              src={product.image}
+              alt={product.name}
+              className="w-full h-full object-contain"
+            />
           </div>
 
           {/* Right: Info */}
           <div className="flex flex-col">
             {/* Brand */}
             <p className="text-xs font-semibold uppercase tracking-widest text-muted-foreground">
-              {product.brand.replace('-', ' ')}
+              {product.brand.replace("-", " ")}
             </p>
 
             {/* Name */}
@@ -105,12 +125,14 @@ export function ProductDetail({ product, category, related }: Props) {
                 {Array.from({ length: 5 }).map((_, i) => (
                   <StarIcon
                     key={i}
-                    className={`size-4 ${i < Math.round(product.rating) ? 'fill-current' : 'fill-none opacity-30'}`}
+                    className={`size-4 ${i < Math.round(product.rating) ? "fill-current" : "fill-none opacity-30"}`}
                     aria-hidden="true"
                   />
                 ))}
               </div>
-              <span className="text-sm font-semibold tabular-nums">{product.rating}</span>
+              <span className="text-sm font-semibold tabular-nums">
+                {product.rating}
+              </span>
               <span className="text-sm text-muted-foreground">
                 ({product.reviewCount.toLocaleString()} reviews)
               </span>
@@ -158,7 +180,10 @@ export function ProductDetail({ product, category, related }: Props) {
               </h2>
               <div className="divide-y rounded-xl border">
                 {Object.entries(product.specs).map(([key, val]) => (
-                  <div key={key} className="flex items-center justify-between px-4 py-3 text-sm">
+                  <div
+                    key={key}
+                    className="flex items-center justify-between px-4 py-3 text-sm"
+                  >
                     <span className="text-muted-foreground">{key}</span>
                     <span className="font-medium text-right">{val}</span>
                   </div>
@@ -217,7 +242,9 @@ export function ProductDetail({ product, category, related }: Props) {
               {product.inStock ? (
                 <span className="text-emerald-600 font-medium">In stock</span>
               ) : (
-                <span className="text-destructive font-medium">Out of stock</span>
+                <span className="text-destructive font-medium">
+                  Out of stock
+                </span>
               )}
             </p>
           </div>
@@ -226,7 +253,9 @@ export function ProductDetail({ product, category, related }: Props) {
         {/* Related products */}
         {related.length > 0 && (
           <section className="mt-16 border-t pt-12">
-            <h2 className="mb-6 font-display text-xl font-bold tracking-tight">Related Products</h2>
+            <h2 className="mb-6 font-display text-xl font-bold tracking-tight">
+              Related Products
+            </h2>
             <div className="grid gap-4 grid-cols-2 md:grid-cols-3 lg:grid-cols-4">
               {related.map((p) => (
                 <ProductCard key={p.id} product={p} />

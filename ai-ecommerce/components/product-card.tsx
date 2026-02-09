@@ -36,9 +36,7 @@ export function ProductCard({ product }: { product: Product }) {
         href={`/product/${product.slug}`}
         className="relative flex aspect-square items-center justify-center bg-muted/50 p-6 transition-colors duration-200 group-hover:bg-muted/80"
       >
-        <span className="text-4xl select-none opacity-40" aria-hidden="true">
-          {categoryEmoji(product.categoryId)}
-        </span>
+        <img src={product.image} alt={product.name} className="w-full h-full object-contain" />
       </Link>
 
       {/* Content */}

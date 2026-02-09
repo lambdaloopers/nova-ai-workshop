@@ -10,7 +10,7 @@
     "discount": 13,
     "rating": 4.7,
     "reviewCount": 234,
-    "image": "/products/laptop-asus.webp",
+    "image": "/products/laptop-asus.png",
     "specs": {
       "Processor": "Intel Core i7-14700H",
       "RAM": "16 GB DDR5",
@@ -34,7 +34,7 @@
     "discount": 18,
     "rating": 4.8,
     "reviewCount": 1823,
-    "image": "/products/ram-corsair.webp",
+    "image": "/products/ram-corsair.png",
     "specs": {
       "Type": "DDR5",
       "Capacity": "32 GB (2×16 GB)",
@@ -58,7 +58,7 @@
     "discount": 18,
     "rating": 4.6,
     "reviewCount": 876,
-    "image": "/products/monitor-samsung.webp",
+    "image": "/products/monitor-samsung.png",
     "specs": {
       "Panel": "VA Curved 1000R",
       "Resolution": "2560×1440 QHD",
@@ -82,7 +82,7 @@
     "discount": 12,
     "rating": 4.9,
     "reviewCount": 3421,
-    "image": "/products/mouse-logitech.webp",
+    "image": "/products/mouse-logitech.png",
     "specs": {
       "Sensor": "HERO 2",
       "DPI": "Up to 44,000",
@@ -106,7 +106,7 @@
     "discount": 19,
     "rating": 4.8,
     "reviewCount": 4532,
-    "image": "/products/ram-kingston.webp",
+    "image": "/products/ram-kingston.png",
     "specs": {
       "Type": "DDR4",
       "Capacity": "32 GB (2×16 GB)",
@@ -130,7 +130,7 @@
     "discount": 14,
     "rating": 4.5,
     "reviewCount": 312,
-    "image": "/products/mobo-msi.webp",
+    "image": "/products/mobo-msi.png",
     "specs": {
       "Socket": "LGA 1700",
       "Chipset": "Intel B760",
@@ -154,7 +154,7 @@
     "discount": 20,
     "rating": 4.9,
     "reviewCount": 2145,
-    "image": "/products/ssd-samsung.webp",
+    "image": "/products/ssd-samsung.png",
     "specs": {
       "Interface": "PCIe 4.0 NVMe",
       "Capacity": "2 TB",
@@ -178,7 +178,7 @@
     "discount": null,
     "rating": 4.6,
     "reviewCount": 567,
-    "image": "/products/keyboard-razer.webp",
+    "image": "/products/keyboard-razer.png",
     "specs": {
       "Switches": "Razer Green v3",
       "Layout": "Full-size",
@@ -202,7 +202,7 @@
     "discount": 10,
     "rating": 4.8,
     "reviewCount": 423,
-    "image": "/products/monitor-lg.webp",
+    "image": "/products/monitor-lg.png",
     "specs": {
       "Panel": "WOLED",
       "Resolution": "3840×2160 4K",
@@ -226,7 +226,7 @@
     "discount": 13,
     "rating": 4.7,
     "reviewCount": 189,
-    "image": "/products/laptop-lenovo.webp",
+    "image": "/products/laptop-lenovo.png",
     "specs": {
       "Processor": "Intel Core Ultra 7 155H",
       "RAM": "32 GB LPDDR5x",
@@ -250,7 +250,7 @@
     "discount": 21,
     "rating": 4.6,
     "reviewCount": 312,
-    "image": "/products/ssd-crucial.webp",
+    "image": "/products/ssd-crucial.png",
     "specs": {
       "Interface": "PCIe 5.0 NVMe",
       "Capacity": "2 TB",
@@ -274,7 +274,7 @@
     "discount": 3,
     "rating": 4.8,
     "reviewCount": 1567,
-    "image": "/products/laptop-apple.webp",
+    "image": "/products/laptop-apple.png",
     "specs": {
       "Processor": "Apple M3 (8-core)",
       "RAM": "16 GB Unified",
@@ -298,7 +298,7 @@
     "discount": 8,
     "rating": 4.7,
     "reviewCount": 891,
-    "image": "/products/headset-steelseries.webp",
+    "image": "/products/headset-steelseries.png",
     "specs": {
       "Driver": "40 mm Neodymium",
       "ANC": "Active Noise Cancelling",
@@ -322,7 +322,7 @@
     "discount": null,
     "rating": 4.6,
     "reviewCount": 234,
-    "image": "/products/phone-samsung.webp",
+    "image": "/products/phone-samsung.png",
     "specs": {
       "Processor": "Snapdragon 8 Elite",
       "RAM": "12 GB",
@@ -346,7 +346,7 @@
     "discount": 18,
     "rating": 4.5,
     "reviewCount": 2340,
-    "image": "/products/hdd-seagate.webp",
+    "image": "/products/hdd-seagate.png",
     "specs": {
       "Interface": "SATA III",
       "Capacity": "8 TB",
@@ -370,7 +370,7 @@
     "discount": 15,
     "rating": 4.9,
     "reviewCount": 156,
-    "image": "/products/monitor-asus.webp",
+    "image": "/products/monitor-asus.png",
     "specs": {
       "Panel": "QD-OLED",
       "Resolution": "3840×2160 4K",
