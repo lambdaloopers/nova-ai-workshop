@@ -1,11 +1,8 @@
-import { Agent } from '@mastra/core/agent';
-import { Memory } from '@mastra/memory';
-import { LibSQLStore } from '@mastra/libsql';
-import { join } from 'node:path';
-import { catalogQueryTool } from '../3-agent-with-tools/tools/catalog-query';
-import { askUserQuestionTool } from '../3-agent-with-tools/tools/ask-user-question';
-
-const dbPath = join(process.cwd(), 'mastra.db');
+import { Agent } from "@mastra/core/agent";
+import { LibSQLStore } from "@mastra/libsql";
+import { Memory } from "@mastra/memory";
+import { askUserQuestionTool } from "../3-agent-with-tools/tools/ask-user-question";
+import { catalogQueryTool } from "../3-agent-with-tools/tools/catalog-query";
 
 // Working Memory Template - Customer Profile
 // Keep only persistent, cross-conversation information
@@ -70,18 +67,18 @@ Help customers find the perfect products efficiently, personally, and profession
 Remember: Working Memory is for GENERAL preferences, not conversation-specific context.`;
 
 export const agentWithMemory = new Agent({
-  id: 'agent-with-memory',
-  name: 'Personal Shopper with Memory',
+  id: "agent-with-memory",
+  name: "Personal Shopper with Memory",
   instructions: ENHANCED_SYSTEM_PROMPT,
-  model: 'openai/gpt-4o',
+  model: "openai/gpt-4o",
   tools: {
     catalogQuery: catalogQueryTool,
     askUserQuestion: askUserQuestionTool,
   },
   memory: new Memory({
-    storage: new LibSQLStore({ 
-      id: 'agent-memory-storage', 
-      url: `file:${dbPath}` 
+    storage: new LibSQLStore({
+      id: "agent-memory-storage",
+      url: `file:/home/alex/LambdaLoopers/Code/AI/nova-ai-workshop/ai-ecommerce/mastra.db`,
     }),
     options: {
       lastMessages: 20, // Keep last 20 messages in context
@@ -89,7 +86,7 @@ export const agentWithMemory = new Agent({
       // Working Memory enabled with "resource" scope (persists per user)
       workingMemory: {
         enabled: true,
-        scope: 'resource', // Memory persists across all threads for the same user
+        scope: "resource", // Memory persists across all threads for the same user
         template: WORKING_MEMORY_TEMPLATE,
       },
     },
