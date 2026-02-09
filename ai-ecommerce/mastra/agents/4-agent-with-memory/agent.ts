@@ -94,7 +94,4 @@ export const agentWithMemory = new Agent({
       },
     },
   }),
-  defaultOptions: {
-    maxSteps: 2,
-  },
 });
