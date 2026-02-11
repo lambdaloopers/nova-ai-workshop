@@ -10,17 +10,19 @@ import { simpleAgent } from "./agents/1-simple-agent/simple-agent";
 import { agentWithPrompt } from "./agents/2-agent-with-prompt/chat-agent";
 import { agentWithTools } from "./agents/3-agent-with-tools/agent";
 import { agentWithMemory } from "./agents/4-agent-with-memory/agent";
+import { personalShopperAgent } from "./agents/5-personal-shopper/personal-shopper-agent";
 
 export enum AgentId {
   SIMPLE_AGENT = 'simple-agent',
   AGENT_WITH_PROMPT = 'agent-with-prompt',
   AGENT_WITH_TOOLS = 'agent-with-tools',
   AGENT_WITH_MEMORY = 'agent-with-memory',
+  PERSONAL_SHOPPER = 'personal-shopper',
 }
 
 export const mastra = new Mastra({
   // AGENTS
-  agents: { simpleAgent, agentWithPrompt, agentWithTools, agentWithMemory },
+  agents: { simpleAgent, agentWithPrompt, agentWithTools, agentWithMemory, personalShopperAgent },
 
   // STORAGE
   storage: new LibSQLStore({

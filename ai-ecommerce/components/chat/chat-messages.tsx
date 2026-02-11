@@ -1,6 +1,11 @@
 "use client";
 
 import { isToolUIPart, type UIMessage } from "ai";
+import {
+  extractTicketFromOutput,
+  extractTicketFromText,
+} from "@/lib/extract-ticket-from-output";
+import { AssistanceTicketCard } from "./tool-renderers/assistance-ticket-card";
 import { SparklesIcon } from "lucide-react";
 
 import {
@@ -61,6 +66,22 @@ export function ChatMessages({
               (part) => isToolUIPart(part) && part.type === 'tool-askUserQuestion'
             );
 
+            // Check if we have a ticket card (from tool part or text containing NVA-XXX)
+            const hasTicketCard =
+              message.parts?.some((part) => {
+                if (!isToolUIPart(part)) return false;
+                const isSubagent =
+                  part.type === 'tool-personalShopperPostSale' ||
+                  part.type === 'tool-agent-personalShopperPostSale';
+                if (!isSubagent || part.state !== 'output-available') return false;
+                return !!extractTicketFromOutput(part.output);
+              }) ||
+              message.parts?.some(
+                (part) =>
+                  part.type === 'text' &&
+                  !!extractTicketFromText((part as { text: string }).text)
+              );
+
             return (
               <Message from={message.role} key={message.id}>
                 <MessageContent
@@ -71,17 +92,34 @@ export function ChatMessages({
                 >
                   {message.parts?.map((part, i) => {
                     switch (part.type) {
-                      case "text":
-                        // Hide text parts if the message contains ask-user-question
-                        // (the tool displays its own UI with the question)
-                        if (hasAskUserQuestion) {
-                          return null;
+                      case "text": {
+                        // Hide text if ask-user-question shows its own UI
+                        if (hasAskUserQuestion) return null;
+                        const text = (part as { text: string }).text;
+                        // If text contains ticket ID, render card instead
+                        const ticketFromText = extractTicketFromText(text);
+                        if (ticketFromText) {
+                          return (
+                            <AssistanceTicketCard
+                              key={`${message.id}-${i}`}
+                              ticketId={ticketFromText.ticketId}
+                              category={ticketFromText.category}
+                              subject={ticketFromText.subject}
+                              description={ticketFromText.description}
+                              priority={ticketFromText.priority}
+                              status={ticketFromText.status}
+                              createdAt={ticketFromText.createdAt}
+                            />
+                          );
                         }
+                        // Hide text if we show ticket from tool part
+                        if (hasTicketCard) return null;
                         return (
                           <MessageResponse key={`${message.id}-${i}`}>
-                            {(part as { text: string }).text}
+                            {text}
                           </MessageResponse>
                         );
+                      }
                       default:
                         if (isToolUIPart(part)) {
                           return (

@@ -3,7 +3,9 @@
 import type { DynamicToolUIPart, UITool, UIToolInvocation } from 'ai';
 import { ProductSuggestionCard } from './product-suggestion-card';
 import { UserQuestionRenderer } from './user-question-renderer';
+import { AssistanceTicketCard } from './assistance-ticket-card';
 import { Shimmer } from '@/components/ai-elements/shimmer';
+import { extractTicketFromOutput } from '@/lib/extract-ticket-from-output';
 
 type ToolPart = DynamicToolUIPart | ({ type: `tool-${string}` } & UIToolInvocation<UITool>);
 
@@ -117,6 +119,94 @@ export function ToolRenderer({ part, onSendMessage }: ToolRendererProps) {
         return (
           <div className="rounded-lg border border-destructive/50 bg-destructive/5 px-3 py-2 text-xs text-destructive">
             Error: {part.errorText || 'Failed to ask question'}
+          </div>
+        );
+    }
+  }
+
+  // personalShopperPostSale subagent - show ticket card when ticket was created
+  const subagentTypes = [
+    'tool-personalShopperPostSale',
+    'tool-agent-personalShopperPostSale',
+  ];
+  if (subagentTypes.includes(part.type)) {
+    switch (part.state) {
+      case 'input-streaming':
+      case 'input-available':
+        return (
+          <div className="flex flex-col gap-2">
+            <Shimmer className="text-xs">Atendiendo tu solicitud…</Shimmer>
+          </div>
+        );
+
+      case 'output-available': {
+        const ticket = extractTicketFromOutput(part.output);
+        if (ticket) {
+          return (
+            <AssistanceTicketCard
+              ticketId={ticket.ticketId}
+              category={ticket.category}
+              subject={ticket.subject}
+              description={ticket.description}
+              priority={ticket.priority}
+              status={ticket.status}
+              createdAt={ticket.createdAt}
+            />
+          );
+        }
+        return null;
+      }
+
+      case 'output-error':
+        return (
+          <div className="rounded-lg border border-destructive/50 bg-destructive/5 px-3 py-2 text-xs text-destructive">
+            Error: {part.errorText || 'Error al procesar la solicitud'}
+          </div>
+        );
+
+      default:
+        return null;
+    }
+  }
+
+  // createAssistanceTicket tool (direct tool call from post-sale agent)
+  if (part.type === 'tool-createAssistanceTicket') {
+    switch (part.state) {
+      case 'input-streaming':
+      case 'input-available':
+        return (
+          <div className="flex flex-col gap-2">
+            <Shimmer className="text-xs">Creando ticket de asistencia…</Shimmer>
+          </div>
+        );
+
+      case 'output-available': {
+        const output = part.output as {
+          ticketId: string;
+          category: string;
+          subject: string;
+          description: string;
+          priority: string;
+          status: string;
+          createdAt: string;
+        };
+        return (
+          <AssistanceTicketCard
+            ticketId={output.ticketId}
+            category={output.category}
+            subject={output.subject}
+            description={output.description}
+            priority={output.priority}
+            status={output.status}
+            createdAt={output.createdAt}
+          />
+        );
+      }
+
+      case 'output-error':
+        return (
+          <div className="rounded-lg border border-destructive/50 bg-destructive/5 px-3 py-2 text-xs text-destructive">
+            Error creando ticket: {part.errorText || 'Error desconocido'}
           </div>
         );
     }

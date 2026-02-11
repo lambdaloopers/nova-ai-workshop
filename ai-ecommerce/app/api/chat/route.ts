@@ -11,8 +11,10 @@ export async function POST(req: Request) {
   const userId = url.searchParams.get('userId') || 'anonymous';
   const threadId = url.searchParams.get('threadId') || 'default-thread';
   
-  // Solo agregar memoria si es el agente con memoria
-  const memoryParams = agentId === AGENT_IDS.AGENT_WITH_MEMORY ? {
+  // Agregar memoria para agentes que la requieren (con threads)
+  const needsMemory =
+    agentId === AGENT_IDS.AGENT_WITH_MEMORY || agentId === AGENT_IDS.PERSONAL_SHOPPER;
+  const memoryParams = needsMemory ? {
     memory: {
       resource: userId,
       thread: {

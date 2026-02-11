@@ -11,6 +11,7 @@ const AGENTS = [
   { id: AGENT_IDS.AGENT_WITH_PROMPT, label: '2. Agent with Prompt', description: 'Sales-focused' },
   { id: AGENT_IDS.AGENT_WITH_TOOLS, label: '3. Agent with Tools', description: 'Catalog query' },
   { id: AGENT_IDS.AGENT_WITH_MEMORY, label: '4. Agent with Memory', description: 'Persistent history' },
+  { id: AGENT_IDS.PERSONAL_SHOPPER, label: '5. Personal Shopper', description: 'Sales + Post-sale' },
 ];
 
 export function AgentSelector() {
