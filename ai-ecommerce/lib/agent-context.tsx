@@ -11,7 +11,7 @@ interface AgentContextValue {
 const AgentContext = createContext<AgentContextValue | null>(null);
 
 export function AgentProvider({ children }: { children: React.ReactNode }) {
-  const [agentId, setAgentId] = useState<AgentId>(AGENT_IDS.AGENT_WITH_PROMPT);
+  const [agentId, setAgentId] = useState<AgentId>(AGENT_IDS.PERSONAL_SHOPPER);
 
   return (
     <AgentContext.Provider value={{ agentId, setAgentId }}>

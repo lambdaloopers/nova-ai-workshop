@@ -12,9 +12,9 @@ import { ChatMessages } from './chat-messages';
 import { ChatInput } from './chat-input';
 
 const suggestions = [
-  'Recommend a laptop under 1,000 €',
-  'Compare wireless earbuds',
-  'Sugiereme un producto cualquiera',
+  'Recommend a laptop under 2,000 €',
+  'Suggest a random product, I am in the mood for something new',
+  'I would like to submit a support ticket, I have a problem with my order',
 ];
 
 /**
