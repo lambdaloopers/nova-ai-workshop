@@ -11,17 +11,17 @@ import { z } from 'zod';
 export const askUserQuestionTool = createTool({
   id: 'ask-user-question',
   description: `
-Ask the customer a question with suggested quick-reply options.
-Use this when you need to refine product search, clarify preferences, or gather specific information.
-The user can click a suggestion or type their own answer.
+MANDATORY: Use this tool whenever you need to ask a clarifying question with 2-6 options.
+NEVER write questions like "¿Para qué lo usarás?", "¿Qué presupuesto tienes?", "Gaming o trabajo?" in plain text - always call this tool instead.
 
-Example use cases:
-- "Which category interests you?" with options: ["Laptops", "Monitors", "Components"]
-- "What's your budget range?" with options: ["Under €500", "€500-€1000", "€1000-€2000", "Over €2000"]
-- "Gaming or productivity?" with options: ["Gaming", "Work/Productivity", "Both"]
+Ask the customer a question with suggested quick-reply options. The user can click a suggestion or type their own answer.
 
-IMPORTANT: After calling this tool, STOP and wait for the user's response.
-Do NOT continue with other actions or questions. The user will provide their answer in their next message.
+Example use cases (call the tool, don't write in text):
+- Use case: question="¿Para qué lo usarás?" suggestions=["Gaming","Trabajo/estudios","Edición vídeo","Uso general"]
+- Budget: question="¿Presupuesto aproximado?" suggestions=["<500€","500-1000€","1000-1500€",">1500€"]
+- Yes/No: question="¿Lo llevarás en mochila a diario?" suggestions=["Sí","No"]
+
+IMPORTANT: After calling this tool, STOP and wait. Do NOT write the question in your response - the tool displays it.
 `,
   inputSchema: z.object({
     question: z

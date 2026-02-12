@@ -1,16 +1,24 @@
 'use client';
 
+import type { ReactNode } from 'react';
 import type { DynamicToolUIPart, UITool, UIToolInvocation } from 'ai';
+import { MessageResponse } from '@/components/ai-elements/message';
 import { ProductSuggestionCard } from './product-suggestion-card';
 import { UserQuestionRenderer } from './user-question-renderer';
 import { AssistanceTicketCard } from './assistance-ticket-card';
 import { Shimmer } from '@/components/ai-elements/shimmer';
 import { extractTicketFromOutput } from '@/lib/extract-ticket-from-output';
+import {
+  extractProductsFromSubagentOutput,
+  extractTextFromSubagentOutput,
+  extractUserQuestionFromMessageParts,
+} from '@/lib/extract-subagent-output';
 
 type ToolPart = DynamicToolUIPart | ({ type: `tool-${string}` } & UIToolInvocation<UITool>);
 
 interface ToolRendererProps {
   part: ToolPart;
+  messageParts?: Array<{ type?: string; data?: unknown; output?: unknown; state?: string }>;
   onSendMessage?: (text: string) => void;
 }
 
@@ -18,7 +26,7 @@ interface ToolRendererProps {
  * Routes tool invocations to the appropriate renderer based on tool name and state.
  * Add new tool renderers here as you add more tools to agents.
  */
-export function ToolRenderer({ part, onSendMessage }: ToolRendererProps) {
+export function ToolRenderer({ part, messageParts, onSendMessage }: ToolRendererProps) {
   // catalogQuery tool (key name in agent.tools object)
   if (part.type === 'tool-catalogQuery') {
     switch (part.state) {
@@ -121,6 +129,73 @@ export function ToolRenderer({ part, onSendMessage }: ToolRendererProps) {
             Error: {part.errorText || 'Failed to ask question'}
           </div>
         );
+    }
+  }
+
+  // personalShopperSales subagent - show products and/or Q&A from nested tool calls
+  const salesSubagentTypes = [
+    'tool-personalShopperSales',
+    'tool-agent-personalShopperSales',
+  ];
+  if (salesSubagentTypes.includes(part.type)) {
+    switch (part.state) {
+      case 'input-streaming':
+      case 'input-available':
+        return (
+          <div className="flex flex-col gap-2">
+            <Shimmer className="text-xs">Buscando para ti…</Shimmer>
+          </div>
+        );
+
+      case 'output-available': {
+        const products = extractProductsFromSubagentOutput(part.output);
+        const userQuestion = extractUserQuestionFromMessageParts(messageParts ?? [part]);
+        const text = extractTextFromSubagentOutput(part.output);
+
+        const elements: ReactNode[] = [];
+
+        if (userQuestion?.waitingForUserResponse) {
+          elements.push(
+            <UserQuestionRenderer
+              key="question"
+              question={userQuestion.question}
+              suggestions={userQuestion.suggestions}
+              onSelectSuggestion={(answer) => onSendMessage?.(answer)}
+            />
+          );
+        }
+
+        if (text?.trim()) {
+          elements.push(
+            <MessageResponse key="message">{text}</MessageResponse>
+          );
+        }
+
+        if (products && products.length > 0) {
+          elements.push(
+            <div key="products" className="flex flex-col gap-2">
+              {products.map((product) => (
+                <ProductSuggestionCard key={product.id} product={product} />
+              ))}
+            </div>
+          );
+        }
+
+        if (elements.length > 0) {
+          return <div className="flex flex-col gap-3">{elements}</div>;
+        }
+        return null;
+      }
+
+      case 'output-error':
+        return (
+          <div className="rounded-lg border border-destructive/50 bg-destructive/5 px-3 py-2 text-xs text-destructive">
+            Error: {part.errorText || 'Error al procesar'}
+          </div>
+        );
+
+      default:
+        return null;
     }
   }
 

@@ -5,6 +5,12 @@ import {
   extractTicketFromOutput,
   extractTicketFromText,
 } from "@/lib/extract-ticket-from-output";
+import {
+  extractProductsFromSubagentOutput,
+  extractProductsFromText,
+  extractUserQuestionFromMessageParts,
+} from "@/lib/extract-subagent-output";
+import { ProductSuggestionCard } from "./tool-renderers/product-suggestion-card";
 import { AssistanceTicketCard } from "./tool-renderers/assistance-ticket-card";
 import { SparklesIcon } from "lucide-react";
 
@@ -61,10 +67,33 @@ export function ChatMessages({
           </div>
         ) : (
           messages.map((message) => {
-            // Check if this message contains an ask-user-question tool call
-            const hasAskUserQuestion = message.parts?.some(
-              (part) => isToolUIPart(part) && part.type === 'tool-askUserQuestion'
-            );
+            // Check if we have ask-user-question (direct or from sales subagent)
+            const hasAskUserQuestion =
+              message.parts?.some(
+                (part) => isToolUIPart(part) && part.type === 'tool-askUserQuestion'
+              ) || !!extractUserQuestionFromMessageParts(message.parts);
+
+            // Check if we have product cards (direct, from sales subagent, or from text)
+            const hasProductCards =
+              message.parts?.some(
+                (part) =>
+                  isToolUIPart(part) &&
+                  part.type === 'tool-catalogQuery' &&
+                  part.state === 'output-available' &&
+                  (part.output as { products?: unknown[] })?.products?.length
+              ) ||
+              message.parts?.some((part) => {
+                if (!isToolUIPart(part)) return false;
+                const isSales =
+                  part.type === 'tool-personalShopperSales' ||
+                  part.type === 'tool-agent-personalShopperSales';
+                return !!extractProductsFromSubagentOutput(part.output);
+              }) ||
+              message.parts?.some(
+                (part) =>
+                  part.type === 'text' &&
+                  extractProductsFromText((part as { text: string }).text).length > 0
+              );
 
             // Check if we have a ticket card (from tool part or text containing NVA-XXX)
             const hasTicketCard =
@@ -93,9 +122,27 @@ export function ChatMessages({
                   {message.parts?.map((part, i) => {
                     switch (part.type) {
                       case "text": {
-                        // Hide text if ask-user-question shows its own UI
+                        // Hide text only for ask-user-question (tool has its own UI)
                         if (hasAskUserQuestion) return null;
                         const text = (part as { text: string }).text;
+                        // If text mentions products, show AI message + cards (contextual intro + product)
+                        const productsFromText = extractProductsFromText(text);
+                        if (productsFromText.length > 0) {
+                          return (
+                            <div
+                              key={`${message.id}-${i}`}
+                              className="flex flex-col gap-2"
+                            >
+                              <MessageResponse>{text}</MessageResponse>
+                              {productsFromText.map((product) => (
+                                <ProductSuggestionCard
+                                  key={product.id}
+                                  product={product}
+                                />
+                              ))}
+                            </div>
+                          );
+                        }
                         // If text contains ticket ID, render card instead
                         const ticketFromText = extractTicketFromText(text);
                         if (ticketFromText) {
@@ -112,7 +159,6 @@ export function ChatMessages({
                             />
                           );
                         }
-                        // Hide text if we show ticket from tool part
                         if (hasTicketCard) return null;
                         return (
                           <MessageResponse key={`${message.id}-${i}`}>
@@ -126,6 +172,7 @@ export function ChatMessages({
                             <ToolRenderer
                               key={`${message.id}-${i}`}
                               part={part}
+                              messageParts={message.parts}
                               onSendMessage={onSuggestion}
                             />
                           );

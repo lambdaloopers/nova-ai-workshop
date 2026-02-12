@@ -1,3 +1,12 @@
+import { SYSTEM_PROMPT as AGENT3_SYSTEM_PROMPT } from "../3-agent-with-tools/prompts";
+
+/**
+ * Subagente de ventas del Personal Shopper.
+ * Usa el mismo prompt que agent 3 (agent-with-tools) porque comparten catálogo + ask-user-question.
+ * Importar desde aquí asegura que las reglas del Personal Shopper se apliquen correctamente.
+ */
+export const SALES_SUBAGENT_INSTRUCTIONS = AGENT3_SYSTEM_PROMPT;
+
 // Personal Shopper - Agente principal que enruta entre ventas y post-venta
 export const PERSONAL_SHOPPER_INSTRUCTIONS = `
 # IDENTITY

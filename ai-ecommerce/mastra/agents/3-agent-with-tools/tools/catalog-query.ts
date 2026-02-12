@@ -14,6 +14,15 @@ export const catalogQueryTool = createTool({
 Search the Nova electronics catalog to find products matching customer needs.
 Use this tool when customers ask for product recommendations, comparisons, or specific items.
 Returns a list of products with full details (name, price, specs, availability).
+
+CRITICAL: Always pass categoryId when the customer specified a product type:
+- laptop/portátil → categoryId: "laptops"
+- monitor → categoryId: "monitors"  
+- keyboard/teclado, mouse, headset → categoryId: "peripherals"
+- components, RAM, SSD → categoryId: "components"
+Never return products from the wrong category (e.g. no headsets when they asked for laptops).
+
+IMPORTANT: Only call this AFTER you have use case and budget from the user. Do not call in the first message when you need to ask clarifying questions.
 `,
   inputSchema: z.object({
     query: z
@@ -76,28 +85,55 @@ Returns a list of products with full details (name, price, specs, availability).
       }
 
       // Text search filter
-      if (query) {
-        const searchLower = query.toLowerCase();
+      const searchTerms = query?.toLowerCase().trim().split(/\s+/) ?? [];
+      if (searchTerms.length > 0) {
         filtered = filtered.filter((p) => {
-          const matchesName = p.name.toLowerCase().includes(searchLower);
-          const matchesBrand = p.brand.toLowerCase().includes(searchLower);
-          const matchesSpecs = Object.values(p.specs).some((spec) =>
-            spec.toLowerCase().includes(searchLower),
-          );
-          return matchesName || matchesBrand || matchesSpecs;
+          const searchable =
+            `${p.name} ${p.brand} ${Object.values(p.specs).join(' ')}`.toLowerCase();
+          // Match if ALL query terms appear somewhere (e.g. "wireless keyboard" -> both in Razer)
+          return searchTerms.every((term) => searchable.includes(term));
         });
       }
 
       // Sort by rating (best first)
       filtered.sort((a, b) => b.rating - a.rating);
 
-      // Limit results
-      const results = filtered.slice(0, Math.min(limit, 10));
+      // FALLBACK: when no results, always suggest related products
+      let results = filtered.slice(0, Math.min(limit, 10));
+      let fallbackUsed = false;
+
+      if (results.length === 0) {
+        fallbackUsed = true;
+        let fallback = products.filter((p) => p.inStock);
+
+        // Prefer same category if we had one
+        if (categoryId) {
+          const inCategory = fallback.filter((p) => p.categoryId === categoryId);
+          if (inCategory.length > 0) fallback = inCategory;
+        }
+        // Else: try broad query (first meaningful word: keyboard, laptop, monitor...)
+        else if (searchTerms.length > 0) {
+          const mainTerm = searchTerms.find(
+            (t) => t.length > 2 && !/^(the|and|for|con|del|los|una|un)$/i.test(t)
+          );
+          if (mainTerm) {
+            const related = fallback.filter((p) => {
+              const s = `${p.name} ${Object.values(p.specs).join(' ')}`.toLowerCase();
+              return s.includes(mainTerm);
+            });
+            if (related.length > 0) fallback = related;
+          }
+        }
+
+        fallback.sort((a, b) => b.rating - a.rating);
+        results = fallback.slice(0, Math.min(limit, 10));
+      }
 
       // Return structured product data
       return {
-        success: true,
+        success: results.length > 0,
         count: results.length,
+        fallbackUsed,
         totalInCatalog: products.length,
         products: results.map((p) => {
           const category = categories.find((c) => c.id === p.categoryId);

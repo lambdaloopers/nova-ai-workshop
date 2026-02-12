@@ -4,6 +4,7 @@ import { LibSQLStore } from "@mastra/libsql";
 import { PERSONAL_SHOPPER_INSTRUCTIONS } from "./prompts";
 import { personalShopperSalesAgent } from "./sales-agent";
 import { personalShopperPostSaleAgent } from "./post-sale-agent";
+import { agentWithMemory } from "../4-agent-with-memory/agent";
 
 export const personalShopperAgent = new Agent({
   id: "personal-shopper",
@@ -12,7 +13,7 @@ export const personalShopperAgent = new Agent({
   instructions: PERSONAL_SHOPPER_INSTRUCTIONS,
   model: "openai/gpt-4o",
   agents: {
-    personalShopperSales: personalShopperSalesAgent,
+    personalShopperSales: agentWithMemory,
     personalShopperPostSale: personalShopperPostSaleAgent,
   },
   memory: new Memory({
